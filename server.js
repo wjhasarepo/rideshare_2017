@@ -3,13 +3,33 @@ var session = require('express-session');
 var path = require('path');
 var bodyParser = require("body-parser");
 var passport = require('passport');
+var strategy = require('passport-local').Strategy;
 
 var customer = require('./routes/customer');
 var index = require('./routes/index');
 
 var app = express();
 
-require('./lib/passport')(passport);
+// require('./lib/passport')(passport);
+
+var mysql = require('mysql');
+var bcrypt = require('bcrypt-nodejs');
+
+var connection = mysql.createConnection({
+  host     : 'localhost',
+  user     : 'root',
+  password : 'keybridge!',
+  database : 'mysqltestdb'
+});
+
+connection.connect(function(err) {
+  if(err)
+    console.log("Error connecting database! :( ");
+  else
+    console.log("Database is connected for passport! :) ");
+});
+
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -18,11 +38,94 @@ app.use(session({
 	secret: 'vidyapathaisalwaysrunning',
 	resave: true,
 	saveUninitialized: true
- } )); // session secret
+ })
+); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
 app.set('view engine', 'ejs');
+
+// used to serialize the user for the session
+passport.serializeUser(function(id, done) {
+  done(null, id);
+});
+
+// used to deserialize the user
+passport.deserializeUser(function(id, done) {
+  connection.query("SELECT * FROM users WHERE id = " + id, function(err, rows){
+    done(err, rows[0]);
+  });
+});
+
+passport.use(
+  'signup',
+  new strategy({
+    usernameField : 'email',
+    passwordField : 'password',
+    passReqToCallback : true
+  },
+  function(req, email, password, done) {
+    console.log(req.body)
+
+    connection.query("SELECT * FROM device_users WHERE email='" + req.body.email + "'", function(err, rows) {
+      if (err)
+        return done(err);
+      if (rows.length) {
+        return done(null, false, 'That username is already taken.');
+      } else {
+        var newUser = {
+            first_name: req.body.firstname,
+            last_name: req.body.lastname,
+            email: req.body.email,
+            phone: req.body.phone,
+            password: bcrypt.hashSync(req.body.password, null, null)  // use the generateHash function in our user model
+        };
+
+        var insertQuery = "INSERT INTO users ( username, password ) values (" + newUser.username + ", " + newUser.password + ")";
+
+        console.log(insertQuery);
+        // connection.query(insertQuery,[newUserMysql.username, newUserMysql.password],function(err, rows) {
+        //     newUserMysql.id = rows.insertId;
+        //
+        //     return done(null, newUserMysql);
+        // });
+      }
+    });
+  })
+)
+
+passport.use(
+  'login',
+  new strategy({
+    usernameField : 'email',
+    passwordField : 'password',
+    passReqToCallback : true, // allows us to pass back the entire request to the callback
+    session: false
+  },
+  function(req, email, password, done) { // callback with email and password from our form
+    console.log(req.body.email);
+    console.log(email);
+    var user_email = req.body.email;
+    console.log("SELECT * FROM device_users WHERE email='" + email + "';");
+    connection.query("SELECT * FROM device_users WHERE email='" + email + "';", function(err, rows){
+      if (err) {
+        return done(err);
+      }
+
+      if (!rows.length) {
+        return done(null, false, 'No user found.'); // req.flash is the way to set flashdata using connect-flash
+      }
+
+      if (!bcrypt.compareSync(password, rows[0].encrypted_password)) {
+        return done(null, false, 'Oops! Wrong password.');
+      }
+
+      console.log(rows[0]);
+      // all is well, return successful user
+      return done(null, rows[0]);
+    });
+  })
+);
 
 app.get('/', index.index);
 app.get('/customer', customer.index);
@@ -31,12 +134,26 @@ app.post('/customer', customer.create);
 app.delete('/customer/delete/:id', customer.destroy)
 app.put('/customer/update/:id',customer.update);
 
-app.post('/signup', passport.authenticate('local-signup',
+app.post('/signup', passport.authenticate('signup'),
   function(req, res) {
-    console.log("hello");
-  })
+    res.json({"Status":"Success"});
+  }
 );
-app.post('/login', passport.authenticate('local-signin'));
+app.post('/login', passport.authenticate('login'),
+  function(req, res) {
+    res.json({"Status":"Success"});
+  }
+);
+// app.get('/login', function(req, res, next) {
+//   passport.authenticate('local', function(err, user, info) {
+//     if (err) { return next(err); }
+//     if (!user) { res.json('Not Found'); }
+//     req.logIn(user, function(err) {
+//       if (err) { return next(err); }
+//       res.json(user);
+//     });
+//   })(req, res, next);
+// });
 app.get('/logout', function(req, res){
   var name = req.user.username;
   console.log("LOGGIN OUT " + req.user.username)
