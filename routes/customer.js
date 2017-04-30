@@ -3,8 +3,8 @@ var mysql = require('mysql');
 var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
-  password : 'keybridge!',
-  database : 'mysqltestdb'
+  password : 'jzl000jzl',
+  database : 'rideshare'
 });
 
 connection.connect(function(err) {
@@ -14,46 +14,7 @@ connection.connect(function(err) {
     console.log("Database is connected! :) ");
 });
 
-/*
-exports.create = function(req, res){
-	res.render('add_customer',{page_title:"Add Customers - Node.js"});
-};
 
-exports.edit = function(req, res) {
-  console.log(req.body);
-  var id = req.params.id;
-  var data = {
-      name    : req.body.name,
-      address : req.body.address,
-      email   : req.body.email,
-      phone   : req.body.phone
-  };
-
-  connection.query("UPDATE customer set " + data + " WHERE id = " + id, function(err, rows) {
-    if (err)
-      console.log("Error Updating : %s ",err );
-    res.redirect('/customers');
-  });
-};
-
-exports.save = function(req, res) {
-  var input = JSON.parse(JSON.stringify(req.body));
-  var data = {
-      name    : input.name,
-      address : input.address,
-      email   : input.email,
-      phone   : input.phone
-  };
-
-  var query = connection.query("INSERT INTO customer set ? ",data, function(err, rows) {
-    if (err)
-      console.log("Error inserting : %s ",err );
-    res.redirect('/customers');
-  });
-
-  console.log(query.sql);
-};
-*/
 
 /*
 Get all items from the record.
@@ -154,3 +115,23 @@ exports.destroy = function(req,res){
     }
   });
 };
+
+/*
+exports.save = function(req, res) {
+  var input = JSON.parse(JSON.stringify(req.body));
+  var data = {
+      name    : input.name,
+      address : input.address,
+      email   : input.email,
+      phone   : input.phone
+  };
+
+  var query = connection.query("INSERT INTO customer set ? ",data, function(err, rows) {
+    if (err)
+      console.log("Error inserting : %s ",err );
+    res.redirect('/customers');
+  });
+
+  console.log(query.sql);
+};
+*/

@@ -1,9 +1,13 @@
 var express = require('express');
 var path = require('path');
 var bodyParser = require("body-parser");
+var passport = require('passport');
 
 var customer = require('./routes/customer');
 var index = require('./routes/index');
+var device_user = require('./routes/device_user');
+
+require('./lib/passport')(passport); // pass passport for configuration
 
 var app = express();
 
@@ -11,20 +15,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+
+app.use(passport.initialize());
+
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.get('/', index.index);
 app.get('/customer', customer.index);
 app.get('/customer/:id', customer.show);
-// app.get('/customer', customer.show);
 app.post('/customer', customer.create);
-// app.get('/customers/add', customers.create);
-// app.post('/customers/add', customers.save);
 app.delete('/customer/delete/:id', customer.destroy)
-// app.get('/customers/delete/:id', customers.delete_customer);
-//app.get('/customers/edit/:id', customers.edit);
 app.put('/customer/update/:id',customer.update);
+
+
+
+app.post('/register', device_user.register);
+app.get('/authenticate', device_user.authenticate);
+app.post('/dashboard', device_user.dashboard);
 
 /*
 var pool = mysql.createPool({
