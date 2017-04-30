@@ -9,9 +9,13 @@
   "author": "Wayne",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^1.0.2",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
-    "passport": "^0.3.2"
+    "express-session": "^1.15.2",
+    "node-datetime": "^1.0.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "passport-local-register": "^1.0.4"
   }
 }

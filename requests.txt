@@ -1,0 +1,16 @@
+http://localhost:8080/signup
+POST
+{
+  "firstname": "wayne",
+  "lastname": "jiao",
+  "email": "waynejiao@rideshare.com",
+  "phone": "888-666-2017",
+  "password": "test"
+}
+
+http://localhost:8080/login
+POST
+{
+  "email": "waynejiao@rideshare.com",
+  "password": "test"
+}
