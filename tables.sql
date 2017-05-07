@@ -79,52 +79,52 @@ add_index positions, [user_id], name: index_positions_on_user_id
 
 
 
-create table rides_offered {
-  rider_offer_id integer not null primary key,
-	user_id integer not null primary key, 
-	airport_id integer not null,
-  car_id integer, 
-	timing datetime,
-  start varchar(255),  
-  start_lat  decimal,
-  start_lng decimal, 
-  destination varchar(255),  
-  destination_lat decimal, 
-  destination_lng decimal, 
-  available_passengers integer, 
-  available_bags integer, 
-  flex_value decimal,
-  flex_unit varchar(255),
-  created_at datetime not null,
-  updated_at datetime not null,
-	foreign key (user_id) references device_users(user_id) on delete cascade
-	foreign key (airport_id) references airport(airport_id) on delete cascade
-}
-  
+create table rides_offered
+(
+  rider_offer_id integer not null primary key auto_increment,
+  user_id integer,
+  offer_time datetime,
+  start_address varchar(128),
+  start_lat decimal,
+  start_lng decimal,
+  destination_address varchar(128),
+  destination_lat decimal,
+  destination_lng decimal,
+  available_passengers integer,
+  available_bags integer,
+  flexible_value decimal,
+  created_at datetime,
+  updated_at datetime,
+  foreign key (user_id) references device_users(user_id) on delete cascade
+);
+-- airport_id integer not null,
+-- car_id integer,
+-- foreign key (airport_id) references airport(airport_id) on delete cascade
+
 add_index rides_offered, [car_id], name: index_rides_offered_on_car_id
   
 
 
-create table rides_requested {
-  ride_request_id integer not null primary key,
-  user_id integer not null primary key,
-	airport_id integer,
-  passengers integer,
-  bag_capacity integer,
-  timing datetime,
-  start_address varchar(255),
-  start_lat decimal,
-  start_lng decimal,
-  destination_address varchar(255),
-  destination_lat decimal,
-  destination_lng decimal,
-  created_at datetime not null,
-  updated_at datetime not null,
-	foreign key (user_id) references device_users(user_id) on delete cascade
-	foreign key (airport_id) references airport(airport_id) on delete cascade
-}
+create table rides_requested
+(
+  ride_request_id integer not null primary key auto_increment,
+  user_id integer,
+  passengers integer,
+  bags integer,
+  request_time datetime,
+  start_address varchar(128),
+  start_lat decimal,
+  start_lng decimal,
+  destination_address varchar(128),
+  destination_lat decimal,
+  destination_lng decimal,
+  created_at datetime,
+  updated_at datetime,
+  foreign key (user_id) references device_users(user_id) on delete cascade
+);
 
-
+-- airport_id integer,
+-- foreign key (airport_id) references airport(airport_id) on delete cascade
 
 create table rides_matches {
 	ride_match_id integer not null primary key,
@@ -173,3 +173,26 @@ insert into device_users
 (user_id,first_name,last_name,phone_number,email,encrypted_password,sign_in_count,current_sign_in_at,last_sign_in_at,current_sign_in_ip,last_sign_in_ip,failed_attempts,locked_at,unlock_token,token,created_at,updated_at)
 values
 (1,'wayne','jiao','1234567890','waynejiao@gmail.com','$2a$10$3/.gvJXfK6rhC6z2jRn6xOPzemRC8gTgBuoZxf/pP6SwnfPjOsL3K',0,'1000-01-01 00:00:00','1000-01-01 00:00:00','null','null',0,'1000-01-01 00:00:00','null','null','1000-01-01 00:00:00','1000-01-01 00:00:00');
+
+
+
+insert into rides_requested
+(ride_request_id,user_id,passengers,bags,request_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,created_at,updated_at)
+values
+(null,4,2,2,'2017-05-01 16:00:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'1320 W Lindsey St, Norman, OK 73069, USA','35.203349','-97.461788','1000-01-01 00:00:00','1000-01-01 00:00:00');
+(rider_offer_id,user_id,offer_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,available_passengers,available_bags,flexible_value,created_at,updated_at)
+values
+(null,1,'2017-05-01 16:00:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'660 Parrington Oval, Norman, OK 73019, USA','35.2091576','-97.44569340000001',2,2,15,'1000-01-01 00:00:00','1000-01-01 00:00:00');
+insert into rides_offered
+(rider_offer_id,user_id,offer_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,available_passengers,available_bags,flexible_value,created_at,updated_at)
+values
+(null,2,'2017-05-01 16:10:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'660 Parrington Oval, Norman, OK 73019, USA','35.2091576','-97.44569340000001',2,2,15,'1000-01-01 00:00:00','1000-01-01 00:00:00');
+insert into rides_offered
+(rider_offer_id,user_id,offer_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,available_passengers,available_bags,flexible_value,created_at,updated_at)
+values
+(null,3,'2017-05-01 16:20:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'1320 W Lindsey St, Norman, OK 73069, USA','35.2091576','-97.44569340000001',2,2,15,'1000-01-01 00:00:00','1000-01-01 00:00:00');
+
+insert into rides_requested
+(ride_request_id,user_id,passengers,bags,request_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,created_at,updated_at)
+values
+(null,4,2,2,'2017-05-01 16:00:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'1320 W Lindsey St, Norman, OK 73069, USA','35.203349','-97.461788','1000-01-01 00:00:00','1000-01-01 00:00:00');
