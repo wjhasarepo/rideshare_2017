@@ -9,7 +9,7 @@ var dateTime = require('node-datetime');
 var customer = require('./routes/customer');
 var index = require('./routes/index');
 var device_user = require('./routes/device_user');
-
+var car = require('./routes/car');
 // require('./app/passport')(passport);
 
 var app = express();app.set('view engine', 'ejs');
@@ -143,6 +143,12 @@ app.get('/customer/:id', customer.show);
 app.post('/customer', customer.create);
 app.delete('/customer/delete/:id', customer.destroy)
 app.put('/customer/update/:id',customer.update);
+
+app.get('/car', car.index);
+app.get('/car/:id', car.show);
+app.post('/car', car.create);
+app.delete('/car/delete/:id', car.destroy)
+app.put('/car/update/:id',car.update);
 
 app.post('/signup', passport.authenticate('signup'),
   function(req, res) {
