@@ -30,22 +30,23 @@ create table device_users
   updated_at datetime
 );
 
-// create unique index id on device_users (user_id, email)
+create unique index id on device_users (user_id, email)
 
 
 
-create table cars {
-  user_id integer not null primary key,
-  car_id integer not null auto_increment primary key,
-  year integer, 
-  make varchar(255),
-  model varchar(255),  
-  color varchar(255),
-  created_at datetime,
-  updated_at datetime,
-	foreign key (user_id) references device_users(user_id) on delete cascade
-};
-  
+create table cars
+(
+user_id integer not null,
+car_id integer not null auto_increment primary key,
+year integer,
+make varchar(128),
+model varchar(128),
+color varchar(128),
+created_at datetime,
+updated_at datetime,
+foreign key (user_id) references device_users(user_id) on delete cascade
+);
+
 add_index cars, [user_id], name: index_cars_on_user_id
 
 
@@ -168,6 +169,10 @@ create table transaction_reviews {
 add_index transaction_reviews, [ride_transaction_id], name: index_transaction_reviews_on_ride_transaction_id
 
 
+
+-------------------------
+-- sample testing data --
+-------------------------
 
 insert into device_users
 (user_id,first_name,last_name,phone_number,email,encrypted_password,sign_in_count,current_sign_in_at,last_sign_in_at,current_sign_in_ip,last_sign_in_ip,failed_attempts,locked_at,unlock_token,token,created_at,updated_at)
