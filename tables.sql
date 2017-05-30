@@ -34,6 +34,22 @@ create unique index id on device_users (user_id, email)
 
 
 
+create table users_role
+(
+role_id integer not null auto_increment primary key,
+user_id integer not null,
+type varchar(128),
+created_at datetime,
+updated_at datetime,
+foreign key (user_id) references device_users(user_id) on delete cascade,
+)
+
+add_index device_users_roles, [user_id, role_id], name: index_device_users_roles_on_user_id_and_role_id
+add_index roles, [name, resource_type, resource_id], name: index_roles_on_name_and_resource_type_and_resource_id
+add_index roles, [name], name: index_roles_on_name
+
+
+
 create table cars
 (
 user_id integer not null,
@@ -48,22 +64,6 @@ foreign key (user_id) references device_users(user_id) on delete cascade
 );
 
 add_index cars, [user_id], name: index_cars_on_user_id
-
-
-
-create table users_roles {
-  user_id integer not null primary key, 
-  role_id integer not null primary key,
-	type integer not null,
-  created_at datetime,
-  updated_at datetime,
-	foreign key (user_id) references device_users(user_id) on delete cascade,
-	foreign key (resource_id) references cars(car_id) on delete cascade
-}
-
-add_index device_users_roles, [user_id, role_id], name: index_device_users_roles_on_user_id_and_role_id
-add_index roles, [name, resource_type, resource_id], name: index_roles_on_name_and_resource_type_and_resource_id
-add_index roles, [name], name: index_roles_on_name
 
 
 
