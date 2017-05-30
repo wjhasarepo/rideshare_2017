@@ -10,6 +10,7 @@ var customer = require('./routes/customer');
 var index = require('./routes/index');
 var device_user = require('./routes/device_user');
 var car = require('./routes/car');
+var role = require('./routes/role');
 // require('./app/passport')(passport);
 
 var app = express();app.set('view engine', 'ejs');
@@ -150,6 +151,12 @@ app.post('/car', car.create);
 app.delete('/car/delete/:id', car.destroy)
 app.put('/car/update/:id',car.update);
 
+app.get('/role', car.index);
+app.get('/role/:id', car.show);
+app.post('/role', car.create);
+app.delete('/role/delete/:id', car.destroy)
+app.put('/role/update/:id',car.update);
+
 app.post('/signup', passport.authenticate('signup'),
   function(req, res) {
     res.json({"Status":"Success"});
@@ -160,16 +167,6 @@ app.post('/login', passport.authenticate('login'),
     res.json({"Status":"Success"});
   }
 );
-// app.get('/login', function(req, res, next) {
-//   passport.authenticate('local', function(err, user, info) {
-//     if (err) { return next(err); }
-//     if (!user) { res.json('Not Found'); }
-//     req.logIn(user, function(err) {
-//       if (err) { return next(err); }
-//       res.json(user);
-//     });
-//   })(req, res, next);
-// });
 app.get('/logout', function(req, res){
   var name = req.user.username;
   console.log("LOGGIN OUT " + req.user.username)
