@@ -23,7 +23,7 @@ Get all items from the record.
 */
 exports.index = function(req, res){
   console.log("index");
-  var query = connection.query('SELECT * FROM rides_requested', function(err, rows){
+  var query = connection.query('SELECT * FROM rides_offered', function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
 
@@ -41,7 +41,7 @@ Get an items with id = :id.
 */
 exports.show = function(req, res){
   var id = req.params.id;
-  var query = connection.query('SELECT * FROM rides_requested WHERE id=' + id, function(err, rows){
+  var query = connection.query('SELECT * FROM rides_offered WHERE id=' + id, function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
 
@@ -59,15 +59,16 @@ exports.create = function(req, res){
   console.log(req.body);
   var input = JSON.parse(JSON.stringify(req.body));
   var data = {
-      passengers            : input.passengers,
-      bags                  : input.bags,
-      request_time          : input.request_time,
+      available_passengers  : input.passengers,
+      available_bags        : input.bags,
+      offer_time            : input.offer_time,
       start_address         : input.start_address,
       start_lat             : input.start_lat,
       start_lng             : input.start_lng,
       destination_address   : input.destination_address,
       destination_lat       : input.destination_lat,
-      destination_lng       : input.destination_lng
+      destination_lng       : input.destination_lng,
+      flexible_value        : input.flexible_value
   };
   console.log(data);
 
@@ -76,9 +77,9 @@ exports.create = function(req, res){
   var datetime = dateTime.create().format('Y-m-d H:M:S');
   console.log(datetime);
 
-  var query = connection.query("INSERT INTO rides_requested VALUES (null, '"+data.passengers+"','"+data.bags+"','"+data.request_time+"','"+data.start_address+"','"+data.start_lat+"','"+data.start_lng+"','"+data.destination_address+"','"+data.destination_lat+"','"+data.destination_lng+"','"+dateTime+"','"+dateTime+");", function(err, rows){
+  var query = connection.query("INSERT INTO rides_offered VALUES (null, '"+data.offer_time+"','"+data.start_address+"','"+data.start_lat+"','"+data.start_lng+"','"+data.destination_address+"','"+data.destination_lat+"','"+data.destination_lng+"','"+data.available_passengers+"','"+data.available_bags+"','"+data.flexible_value+"','"+dateTime+"','"+dateTime+");", function(err, rows){
     if(err) {
-      console.log("INSERT INTO rides_requested VALUES ('"+data.passengers+"','"+data.bags+"','"+data.start_address+"','"+data.start_lat+"');");
+      console.log("INSERT INTO rides_offered VALUES (null, '"+data.offer_time+"','"+data.start_address+"','"+data.start_lat+"','"+data.start_lng+"','"+data.destination_address+"','"+data.destination_lat+"','"+data.destination_lng+"','"+data.available_passengers+"','"+data.available_bags+"','"+data.flexible_value+"','"+dateTime+"','"+dateTime+");");
       console.log("Error Inserting : %s", err);
       res.json({"status":"400 Back Request!"});
     } else {
@@ -99,7 +100,7 @@ exports.update = function(req, res){
 
   // loop through input data
 
-  var query = connection.query("UPDATE rides_requested SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE id = " + id, function(err, rows) {
+  var query = connection.query("UPDATE rides_offered SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE id = " + id, function(err, rows) {
     if(err) {
       console.log("Error Selecting : %s ", err );
       res.json({"status":"400 Back Request!"});
@@ -116,7 +117,7 @@ Delete an item with id = :id
 */
 exports.destroy = function(req,res){
   var id = req.params.id;
-  connection.query("DELETE FROM rides_requested  WHERE id = " + id, function(err, rows) {
+  connection.query("DELETE FROM rides_offered  WHERE id = " + id, function(err, rows) {
     if(err) {
       console.log("Error deleting : %s ",err );
       res.json({"status":"400 Back Request!"});
