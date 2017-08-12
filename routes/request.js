@@ -41,11 +41,12 @@ Get an items with id = :id.
 */
 exports.show = function(req, res){
   var id = req.params.id;
-  var query = connection.query('SELECT * FROM rides_requested WHERE id=' + id, function(err, rows){
+  console.log('SELECT * FROM rides_requested WHERE user_id=' + id);
+  var query = connection.query('SELECT * FROM rides_requested WHERE user_id=' + id, function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
 
-		console.log(rows[0]);
+		console.log(rows);
     res.json(rows[0]);
 	});
 };
@@ -99,7 +100,7 @@ exports.update = function(req, res){
 
   // loop through input data
 
-  var query = connection.query("UPDATE rides_requested SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE id = " + id, function(err, rows) {
+  var query = connection.query("UPDATE rides_requested SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE user_id = " + id, function(err, rows) {
     if(err) {
       console.log("Error Selecting : %s ", err );
       res.json({"status":"400 Back Request!"});
@@ -116,7 +117,7 @@ Delete an item with id = :id
 */
 exports.destroy = function(req,res){
   var id = req.params.id;
-  connection.query("DELETE FROM rides_requested  WHERE id = " + id, function(err, rows) {
+  connection.query("DELETE FROM rides_requested  WHERE user_id = " + id, function(err, rows) {
     if(err) {
       console.log("Error deleting : %s ",err );
       res.json({"status":"400 Back Request!"});

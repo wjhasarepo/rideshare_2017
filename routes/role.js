@@ -85,7 +85,7 @@ exports.update = function(req, res){
   var data = {
     type    : input.type
   };
-  var query = connection.query("UPDATE car SET type='" + data.type + "' WHERE id = " + id, function(err, rows) {
+  var query = connection.query("UPDATE users_role SET type='" + data.type + "' WHERE id = " + id, function(err, rows) {
     if(err) {
       console.log("Error Updating : %s ", err );
       res.json({"status":"400 Bad Request!"});

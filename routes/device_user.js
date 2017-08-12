@@ -8,7 +8,7 @@ module.exports = function(app, passport) {
 
     // LOGIN
     app.get('/login', function(req, res) {
-        res.render('login.ejs', { message: req.flash('loginMessage') }); 
+        res.render('login.ejs', { message: req.flash('loginMessage') });
     });
 
     // process the login form
@@ -59,7 +59,7 @@ module.exports = function(app, passport) {
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
 
-    // if user is authenticated in the session, carry on 
+    // if user is authenticated in the session, carry on
     if (req.isAuthenticated())
         return next();
 
@@ -85,7 +85,7 @@ connection.connect(function(err) {
     console.log("Database is connected! :) ");
 });
 
-exports.register = function(req, res) {  
+exports.register = function(req, res) {
   if(!req.body.email || !req.body.password) {
     res.json({ success: false, message: 'Please enter email and password.' });
   } else {
@@ -110,12 +110,12 @@ exports.register = function(req, res) {
 }
 
 exports.authenticate = function(req, res) {
-	var id = req.params.id; 
-  var query = connection.query('SELECT * FROM customer WHERE id=' + id, function(err, user) {
+	var id = req.params.id;
+  var query = connection.query('SELECT * FROM device_users WHERE user_id=' + id, function(err, user) {
     if (err) {
 			throw err;
 		} else {
-    	if (!row.length) {                                                   
+    	if (!row.length) {
     		return console.log('Error2');
   		} else if (!row[0].something) {
     		return console.log('Error3');
@@ -136,11 +136,11 @@ exports.authenticate = function(req, res) {
   });
 }
 
-exports.dashboard = function(req, res) {  
+exports.dashboard = function(req, res) {
   res.send('It worked! User id is: ' + req.user._id + '.');
 }
 
-comparePassword = function(pwd, callback) {  
+comparePassword = function(pwd, callback) {
   bcrypt.compare(pwd, this.password, function(err, isMatch) {
     if (err) {
       return callback(err);

@@ -11,6 +11,7 @@ var index = require('./routes/index');
 var device_user = require('./routes/device_user');
 var car = require('./routes/car');
 var role = require('./routes/role');
+var request = require('./routes/request')
 // require('./app/passport')(passport);
 
 var app = express();app.set('view engine', 'ejs');
@@ -47,14 +48,16 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
 // used to serialize the user for the session
-passport.serializeUser(function(id, done) {
-  done(null, id);
+passport.serializeUser(function(user, done) {
+  console.log(user.id);
+  done(null, user.user_id);
 });
 
 // used to deserialize the user
 passport.deserializeUser(function(id, done) {
-  connection.query("SELECT * FROM users WHERE id = " + id, function(err, rows){
-    done(err, rows[0]);
+  console.log("SELECT * FROM device_users WHERE user_id = " + id);
+  connection.query("SELECT * FROM device_users WHERE user_id = " + id, function(err, user){
+    done(err, user);
   });
 });
 
@@ -82,20 +85,21 @@ passport.use(
             password: bcrypt.hashSync(req.body.password, null, null)  // use the generateHash function in our user model
         };            newUser.id = rows.insertId;
 
-        var dummy = dateTime.create('1000-01-01 00:00:00').format('Y-m-d H:M:S');
-        console.log(dummy);
+        var dummy_datetime = dateTime.create('1000-01-01 00:00:00').format('Y-m-d H:M:S');
         var datetime = dateTime.create().format('Y-m-d H:M:S');
-        console.log(datetime);
-        var insertQuery = "INSERT INTO device_users ( " +
-                          "user_id, first_name, last_name, phone_number, email, encrypted_password, sign_in_count, current_sign_in_at, last_sign_in_at, current_sign_in_ip, last_sign_in_ip, failed_attempts, locked_at, unlock_token, token, created_at, updated_at ) " +
-                          "VALUES ( " +
-                          "null, '" + newUser.first_name + "', '" + newUser.last_name + "', '" + newUser.phone + "', '" + newUser.email + "', '" + newUser.password + "', " +
-                          "0, '" + dummy + "', '" + dummy + "', null, null, 0, '" + dummy + "', null, null, '" + datetime + "', '" + datetime + "' )";
 
-        console.log(insertQuery);
+        var insertQuery = "INSERT INTO device_users " +
+                          "( user_id, first_name, last_name, phone_number, email, encrypted_password, sign_in_count, current_sign_in_at, last_sign_in_at, current_sign_in_ip, last_sign_in_ip, failed_attempts, locked_at, unlock_token, token, created_at, updated_at ) " +
+                          "VALUES " +
+                          "( null, '" + newUser.first_name + "', '" + newUser.last_name + "', '" + newUser.phone + "', '" + newUser.email + "', '" + newUser.password + "', " +
+                          "0, '" + dummy_datetime + "', '" + dummy_datetime + "', null, null, 0, '" + dummy_datetime + "', null, null, '" + datetime + "', '" + datetime + "' )";
+
+
         connection.query(insertQuery, function(err, rows) {
-          if (err)
+          if (err) {
+            console.log(insertQuery);
             return done(err);
+          }
 
           console.log(rows);
           return done(null, newUser);
@@ -114,12 +118,13 @@ passport.use(
     session: false
   },
   function(req, email, password, done) { // callback with email and password from our form
-    console.log(req.body.email);
-    console.log(email);
+    // console.log(req.body.email);
+    // console.log(email);
     var user_email = req.body.email;
-    console.log("SELECT * FROM device_users WHERE email='" + email + "';");
+
     connection.query("SELECT * FROM device_users WHERE email='" + email + "';", function(err, rows){
       if (err) {
+        console.log("SELECT * FROM device_users WHERE email='" + email + "';");
         return done(err);
       }
 
@@ -138,7 +143,13 @@ passport.use(
   })
 );
 
+/*
+ * Routes for requests
+ */
 app.get('/', index.index);
+app.get('/login', index.login);
+app.get('/profile', index.profile);
+
 app.get('/customer', customer.index);
 app.get('/customer/:id', customer.show);
 app.post('/customer', customer.create);
@@ -157,16 +168,27 @@ app.post('/role', car.create);
 app.delete('/role/delete/:id', car.destroy)
 app.put('/role/update/:id',car.update);
 
+app.get('/request', request.index);
+app.get('/request/:id', request.show);
+app.post('/request', request.create);
+app.delete('/request/delete/:id', request.destroy)
+app.put('/request/update/:id',request.update);
+
 app.post('/signup', passport.authenticate('signup'),
   function(req, res) {
     res.json({"Status":"Success"});
   }
 );
-app.post('/login', passport.authenticate('login'),
-  function(req, res) {
-    res.json({"Status":"Success"});
+app.post('/login', passport.authenticate('login', {
+    successRedirect : '/profile',
+    failureRedirect : '/login',
+    failureFlash : true
   }
-);
+  // ),
+  // function(req, res) {
+  //   res.json({"Status":"Success"});
+  // }
+));
 app.get('/logout', function(req, res){
   var name = req.user.username;
   console.log("LOGGIN OUT " + req.user.username)
