@@ -14,7 +14,7 @@
 <div class="container">
 
     <div class="page-header text-center">
-        <h1><span class="fa fa-anchor"></span> Profile Page</h1>
+        <h1><span class="fa fa-anchor"></span> Rides </h1>
         <a href="/logout" class="btn btn-default btn-sm">Logout</a>
     </div>
 
@@ -23,50 +23,24 @@
         <!-- LOCAL INFORMATION -->
         <div class="col-sm-6">
             <div class="well">
-              <req></req>
+              <p></p>
             </div>
         </div>
 
     </div>
 
     <div>
-      <button type="submit" class="btn btn-lg request">Find A Driver</button>
-    </div>
-
-    <div class="row">
-
-        <!-- LOCAL INFORMATION -->
-        <div class="col-sm-6">
-            <div class="well">
-              <res></res>
-            </div>
-        </div>
-
+      <button type="submit" class="btn btn-lg">Find A Driver</button>
     </div>
 
 </div>
 </body>
 <script>
 $(document).ready(function(){
-  $.get('http://localhost:8080/request/1', {}, function(data){
-    console.log(data);
-    for(var item in data) {
-      $("req").append("<li>"+item+"</li>");
-    }
-    $("req").html(JSON.stringify(data));
-  });
-
-  $(".request").on("click", function(){
-    console.log("here");
-    $.post('http://localhost:8080/match', function(data){
-      data.forEach(function(element) {
-          console.log(JSON.stringify(element));
-          $("res").append(JSON.stringify(element));
-      });
-
-    });
-  });
-
+   $.get('http://localhost:8080/match', {}, function(data){
+        console.log(data);
+        $("p").html(JSON.stringify(data));
+   });
 });
 </script>
 </html>
