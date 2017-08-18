@@ -12,6 +12,7 @@ var device_user = require('./routes/device_user');
 var car = require('./routes/car');
 var role = require('./routes/role');
 var request = require('./routes/request')
+var map = require('./lib/maps')
 // require('./app/passport')(passport);
 
 var app = express();app.set('view engine', 'ejs');
@@ -149,6 +150,7 @@ passport.use(
 app.get('/', index.index);
 app.get('/login', index.login);
 app.get('/profile', index.profile);
+app.get('/ride', index.ride);
 
 app.get('/customer', customer.index);
 app.get('/customer/:id', customer.show);
@@ -174,6 +176,11 @@ app.post('/request', request.create);
 app.delete('/request/delete/:id', request.destroy)
 app.put('/request/update/:id',request.update);
 
+app.post('/match', map.match);
+
+/*
+ * Initial site actions
+ */
 app.post('/signup', passport.authenticate('signup'),
   function(req, res) {
     res.json({"Status":"Success"});
@@ -196,6 +203,9 @@ app.get('/logout', function(req, res){
   res.redirect('/');
   req.session.notice = "You have successfully been logged out " + name + "!";
 });
+
+
+
 
 /*
 var pool = mysql.createPool({

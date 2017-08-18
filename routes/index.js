@@ -15,3 +15,7 @@ var path    = require("path");
  exports.profile = function(req,res){
    res.sendFile(path.join(__dirname+'/../views/profile.html'));
  };
+
+ exports.ride = function(req,res){
+   res.sendFile(path.join(__dirname+'/../views/ride.html'));
+ };
