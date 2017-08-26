@@ -164,11 +164,11 @@ app.post('/car', car.create);
 app.delete('/car/delete/:id', car.destroy)
 app.put('/car/update/:id',car.update);
 
-app.get('/role', car.index);
-app.get('/role/:id', car.show);
-app.post('/role', car.create);
-app.delete('/role/delete/:id', car.destroy)
-app.put('/role/update/:id',car.update);
+app.get('/role', role.index);
+app.get('/role/:id', role.show);
+app.post('/role', role.create);
+app.delete('/role/delete/:id', role.destroy)
+app.put('/role/update/:id',role.update);
 
 app.get('/request', request.index);
 app.get('/request/:id', request.show);
