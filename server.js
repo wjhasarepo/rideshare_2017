@@ -149,6 +149,7 @@ passport.use(
  */
 app.get('/', index.index);
 app.get('/login', index.login);
+app.get('/role', index.role);
 app.get('/profile', index.profile);
 app.get('/ride', index.ride);
 
@@ -187,7 +188,7 @@ app.post('/signup', passport.authenticate('signup'),
   }
 );
 app.post('/login', passport.authenticate('login', {
-    successRedirect : '/profile',
+    successRedirect : '/role',
     failureRedirect : '/login',
     failureFlash : true
   }

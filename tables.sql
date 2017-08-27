@@ -190,7 +190,7 @@ insert into rides_requested
 values
 (null,1,2,2,'2017-05-01 16:10:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'1320 W Lindsey St, Norman, OK 73069, USA','35.203349','-97.461788','1000-01-01 00:00:00','1000-01-01 00:00:00');
 
-insert into rides_offered
+insert into rides_offeredprofile
 (rider_offer_id,user_id,offer_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,available_passengers,available_bags,flexible_value,created_at,updated_at)
 values
 (null,1,'2017-05-01 16:00:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'660 Parrington Oval, Norman, OK 73019, USA','35.2091576','-97.44569340000001',2,2,15,'1000-01-01 00:00:00','1000-01-01 00:00:00');

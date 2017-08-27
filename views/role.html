@@ -1,0 +1,50 @@
+<!-- views/profile.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Node Authentication</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <style>
+        body        { padding-top:80px; word-wrap:break-word; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="page-header text-center">
+        <h1><span class="fa fa-anchor"></span> Role Page</h1>
+        <a href="/logout" class="btn btn-default btn-sm">Logout</a>
+    </div>
+
+    <div class="row">
+      <button type="submit" class="btn btn-lg role" value="1">I'm a passenger</button>
+    </div>
+
+    <div class="row">
+      <button type="submit" class="btn btn-lg" value="2">I'm a driver</button>
+    </div>
+
+
+</div>
+</body>
+<script>
+$(document).ready(function(){
+  $(".role").on("click", function(){
+    var user_role = $(".role").attr("value");
+    console.log(user_role);
+
+    $.post('http://localhost:8080/role', {role:user_role}, function(data){
+      console.log(data);
+      window.location = 'http://localhost:8080/'+data.url;
+      // $.get('http://localhost:8080/'+data.url, function(data){
+      //   console.log(data);
+      //
+      // });
+    });
+  });
+
+});
+</script>
+</html>
