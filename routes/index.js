@@ -12,6 +12,10 @@ var path    = require("path");
    res.sendFile(path.join(__dirname+'/../views/login.html'));
  };
 
+ exports.role = function(req,res){
+   res.sendFile(path.join(__dirname+'/../views/role.html'));
+ };
+
  exports.profile = function(req,res){
    res.sendFile(path.join(__dirname+'/../views/profile.html'));
  };

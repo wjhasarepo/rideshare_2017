@@ -1,4 +1,6 @@
 var mysql = require('mysql');
+var path    = require("path");
+var dateTime = require('node-datetime');
 
 var connection = mysql.createConnection({
   host     : 'localhost',
@@ -55,21 +57,25 @@ Create an items and save the record.
 # POST /role.json
 */
 exports.create = function(req, res){
-  console.log(req.body);
+  console.log(req.session);
   var input = JSON.parse(JSON.stringify(req.body));
   var data = {
-    type    : input.type
+    id    : req.session.passport.user,
+    role  : input.role
   };
   console.log(data);
 
   var datetime = dateTime.create().format('Y-m-d H:M:S');
-  // console.log("INSERT INTO car VALUES ('"+data.id+"','"+data.address+"','"+data.email+"','"+data.phone+"');");
-  var query = connection.query("INSERT INTO users_role VALUES (null, '"+data.id+"','"+data.type+"','"+datetime+",'"+datetime+"');", function(err, rows){
+  // console.log("INSERT INTO users_role VALUES (null, '"+data.id+"','"+data.role+"','"+datetime+"','"+datetime+"');");
+  var query = connection.query("INSERT INTO users_role VALUES (null, '"+data.id+"','"+data.role+"','"+datetime+"','"+datetime+"');", function(err, rows){
     if(err) {
       console.log("Error Inserting : %s", err);
       res.json({"status":"400 Bad Request!"});
     } else {
-      res.json({"status":"200 OK!"});
+      // res.sendFile(path.join(__dirname+'/../views/profile.html'));
+      // res.redirect('./views/profile.html');
+      // res.json({"status":"200 OK!"});
+      res.json({"url": "profile"});
     }
   });
 };
