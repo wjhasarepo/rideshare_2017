@@ -1,0 +1,80 @@
+<!-- views/login.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Request information</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+    <style>
+        body        { padding-top:80px; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<div class="col-sm-6 col-sm-offset-3">
+
+    <!-- LOGIN FORM -->
+    <form class="info">
+        <div class="form-group">
+            <label>Bags</label>
+            <input type="text" class="bags" name="bags">
+        </div>
+        <div class="form-group">
+            <label>Passengers</label>
+            <input type="password" class="passengers" name="passengers">
+        </div>
+        <div class="form-group">
+            <label>Airport</label>
+            <input type="text" class="start_address" name="start_address" value="7100 Terminal Dr, Oklahoma City, OK">
+        </div>
+        <div class="form-group">
+            <label>Destination</label>
+            <input type="text" class="destination_address" name="destination_address">
+        </div>
+        <div class="form-group">
+            <label>Time to leave</label>
+            <input type="text" class="request_time" name="requestTime">
+        </div>
+
+        <button type="submit" class="btn btn-lg">Submit</button>
+    </form>
+
+    <hr>
+
+    <p><a href="/role">Back</a></p>
+
+</div>
+
+</div>
+</body>
+<script>
+$(document).ready(function(){
+  $(".info").on("click", function(){
+    var bags = $(this).find(".bags").val();
+    var passengers = $(this).find(".passengers").val();
+    var start_address = $(this).find(".start_address").val();
+    var destination_address = $(this).find(".destination_address").val();
+    var request_time = $(this).find(".request_time").val();
+
+    $.get('http://localhost:8080/request/1',  function(data){
+      if(data == '') {
+        $.post('http://localhost:8080/request', 
+          {
+            bags:bags,
+            passengers:passengers,
+            start_address:start_address,
+            destination_address:destination_address,
+            request_time:request_time
+          },
+          function(data){
+            console.log(data)
+          }
+        )
+      }
+    });
+  });
+
+});
+</script>
+</html>
