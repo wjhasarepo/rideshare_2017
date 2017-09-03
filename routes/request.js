@@ -40,12 +40,16 @@ Get an items with id = :id.
 # GET /requests.json
 */
 exports.show = function(req, res){
+  console.log(req.session);
   var id = req.params.id;
+
   console.log('SELECT * FROM rides_requested WHERE user_id=' + id);
   var query = connection.query('SELECT * FROM rides_requested WHERE user_id=' + id, function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
+    else {
 
+    }
 		console.log(rows);
     res.json(rows[0]);
 	});
@@ -83,7 +87,7 @@ exports.create = function(req, res){
       console.log("Error Inserting : %s", err);
       res.json({"status":"400 Back Request!"});
     } else {
-      res.json({"status":"200 OK!"});
+      res.json({"status":"200 OK!", "url":"profile"});
     }
   });
 };
@@ -94,18 +98,25 @@ Update an items with id = :id.
 # PUT /requests/1.json
 */
 exports.update = function(req, res){
+  console.log(req.body);
 	var id = req.params.id;
   var input = JSON.parse(JSON.stringify(req.body));
-  var data = {};
+  var data = {
+      passengers            : input.passengers,
+      bags                  : input.bags,
+      request_time          : input.request_time,
+      start_address         : input.start_address,
+      destination_address   : input.destination_address,
+  };
 
-  // loop through input data
-
+  console.log(data);
+  
   var query = connection.query("UPDATE rides_requested SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE user_id = " + id, function(err, rows) {
     if(err) {
       console.log("Error Selecting : %s ", err );
       res.json({"status":"400 Back Request!"});
     } else {
-      res.json({"status":"200 OK!"});
+      res.json({"status":"200 OK!", "url":"profile"});
     }
   });
 };

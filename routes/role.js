@@ -75,7 +75,7 @@ exports.create = function(req, res){
       // res.sendFile(path.join(__dirname+'/../views/profile.html'));
       // res.redirect('./views/profile.html');
       // res.json({"status":"200 OK!"});
-      res.json({"url": "profile"});
+      res.json({"status":"200 OK!", "url": "request"});
     }
   });
 };

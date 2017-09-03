@@ -23,3 +23,7 @@ var path    = require("path");
  exports.ride = function(req,res){
    res.sendFile(path.join(__dirname+'/../views/ride.html'));
  };
+
+ exports.request = function(req,res){
+   res.sendFile(path.join(__dirname+'/../views/request.html'));
+ };

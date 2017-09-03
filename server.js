@@ -152,6 +152,7 @@ app.get('/login', index.login);
 app.get('/role', index.role);
 app.get('/profile', index.profile);
 app.get('/ride', index.ride);
+app.get('/request', index.request);
 
 app.get('/customer', customer.index);
 app.get('/customer/:id', customer.show);
