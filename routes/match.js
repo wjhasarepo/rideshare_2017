@@ -1,49 +1,53 @@
+var connection = require('../lib/db');
 var mysql = require('mysql');
 var googleMapsClient = require('@google/maps').createClient({
    key: 'AIzaSyBpZitbXaqqqM18mOkgxJKi-jXHze0mj1k'
 });
 
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'jzl000jzl',
-  database : 'rideshare',
-  // dateStrings : true
-});
-
-connection.connect(function(err) {
-  if(err)
-    console.log("Error connecting database! :( ");
-  else
-    console.log("Database is connected for passport! :) ");
-});
-
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : 'jzl000jzl',
+//   database : 'rideshare'
+// });
+//
+// connection.connect(function(err) {
+//   if(err)
+//     console.log("Error connecting database! :( ");
+//   else
+//     console.log("Database is connected! :) ");
+// });
 
 
-let f1 = new Promise(function(resolve, reject) {
-  connection.query('SELECT * FROM rides_requested where ride_request_id = 1', function(err, rows){
-    if(err) {
-      var error = new Error("Error Selecting : %s", err);
-      reject(error)
-    } else {
-      console.log("===================== passenger information ===================");
-      console.log(rows[0]);
+function f1(request_id) {
+  console.log("function f1 with parameter " + request_id);
 
-      var passengerStartAddress = rows[0].start_address;
-      var passengerDestinationAddress = rows[0].destination_address;
-      var requestTime = rows[0].request_time;
+  return new Promise(function(resolve, reject) {
+    connection.query('SELECT * FROM rides_requested where ride_request_id = ' + request_id, function(err, rows){
+      if(err) {
+        var error = new Error("Error Selecting : %s", err);
+        reject(error)
+      } else {
+        console.log("===================== passenger information ===================");
+        console.log(rows[0]);
 
-      console.log(new Date(requestTime.getTime()+(10*60*1000)));
+        var passengerStartAddress = rows[0].start_address;
+        var passengerDestinationAddress = rows[0].destination_address;
+        var requestTime = rows[0].request_time;
 
-      let passenger = rows[0]
-      // obj.passengerStartAddress = passengerStartAddress
-      // obj.passengerDestinationAddress = passengerDestinationAddress
-      // obj.requestTime = requestTime
+        console.log(new Date(requestTime.getTime()+(10*60*1000)));
 
-      resolve(passenger);
-    }
+        let passenger = rows[0]
+        // obj.passengerStartAddress = passengerStartAddress
+        // obj.passengerDestinationAddress = passengerDestinationAddress
+        // obj.requestTime = requestTime
+
+        resolve(passenger);
+      }
+    })
   })
-})
+}
+
 
 function f2(passenger) {
   console.log("function f2 with parameter " + passenger);
@@ -133,9 +137,10 @@ function f4(passenger, driver) {
 }
 
 exports.match = function(req, res) {
+  var id = req.params.id;
   console.log(req.session);
 
-  f1
+  f1(req.params.id)
     .then(f2)
     .then(f3)
     .then(success => res.json(success))

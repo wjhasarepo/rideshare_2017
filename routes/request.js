@@ -1,18 +1,19 @@
+var connection = require('../lib/db');
 var mysql = require('mysql');
 
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'jzl000jzl',
-  database : 'rideshare'
-});
-
-connection.connect(function(err) {
-  if(err)
-    console.log("Error connecting database! :( ");
-  else
-    console.log("Database is connected! :) ");
-});
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : 'jzl000jzl',
+//   database : 'rideshare'
+// });
+//
+// connection.connect(function(err) {
+//   if(err)
+//     console.log("Error connecting database! :( ");
+//   else
+//     console.log("Database is connected! :) ");
+// });
 
 
 
@@ -110,7 +111,7 @@ exports.update = function(req, res){
   };
 
   console.log(data);
-  
+
   var query = connection.query("UPDATE rides_requested SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE user_id = " + id, function(err, rows) {
     if(err) {
       console.log("Error Selecting : %s ", err );
