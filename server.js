@@ -12,7 +12,7 @@ var device_user = require('./routes/device_user');
 var car = require('./routes/car');
 var role = require('./routes/role');
 var request = require('./routes/request')
-var map = require('./lib/maps')
+var match = require('./routes/match')
 // require('./app/passport')(passport);
 
 var app = express();app.set('view engine', 'ejs');
@@ -178,7 +178,7 @@ app.post('/request', request.create);
 app.delete('/request/delete/:id', request.destroy)
 app.put('/request/update/:id',request.update);
 
-app.post('/match', map.match);
+app.post('/match', match.match);
 
 /*
  * Initial site actions
