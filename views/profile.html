@@ -36,7 +36,7 @@
     <div class="row">
 
         <!-- LOCAL INFORMATION -->
-        <div class="col-sm-6">
+        <div class="col-sm-10">
             <div class="well">
               <res></res>
             </div>
@@ -48,7 +48,7 @@
 </body>
 <script>
 $(document).ready(function(){
-  $.get('http://localhost:8080/request/1', {}, function(data){
+  $.get('http://localhost:8081/request/1', {}, function(data){
     console.log(data);
     for(var item in data) {
       $("req").append("<li>"+item+"</li>");
@@ -58,12 +58,37 @@ $(document).ready(function(){
 
   $(".request").on("click", function(){
     console.log("here");
-    $.post('http://localhost:8080/match', function(data){
+    $.get('http://localhost:8081/match', function(data){
       data.forEach(function(element) {
-          console.log(JSON.stringify(element));
-          $("res").append(JSON.stringify(element));
-      });
+        console.log(element);
+          $("res").append("<br><br><br>Driver Profile: <br>");
+          for(key in element){
+            if (element.hasOwnProperty(key)) {
+              console.log("Key is " + key + ", value is " + element[key]);
+              $("res").append(JSON.stringify(key) + ": " + JSON.stringify(element[key]) + "<br>");
+              // $("res").append(JSON.stringify(element));
+            }
+          }
 
+          $("res").append("<div><button type='submit' class='btn btn-lg select'>Select</button></div>");
+      });
+    });
+
+    $.get('http://localhost:8081/request/1/offer/2', function(data){
+      data.forEach(function(element) {
+        console.log(element);
+          $("res").append("<br><br><br>Driver Profile: <br>");
+          for(key in element){
+            if (element.hasOwnProperty(key)) {
+              console.log("Key is " + key + ", value is " + element[key]);
+              $("res").append(JSON.stringify(key) + ": " + JSON.stringify(element[key]) + "<br>");
+              // $("res").append(JSON.stringify(element));
+            }
+          }
+
+          $("res").append("<div><button type='submit' class='btn btn-lg select'>Select</button></div>");
+
+      });
     });
   });
 

@@ -34,15 +34,11 @@ $(document).ready(function(){
   $(".role").on("click", function(){
     var user_role = $(".role").attr("value");
     console.log(user_role);
-
-    $.post('http://localhost:8080/role', {role:user_role}, function(data){
-      console.log(data);
-      window.location = 'http://localhost:8080/'+data.url;
-      // $.get('http://localhost:8080/'+data.url, function(data){
-      //   console.log(data);
-      //
-      // });
-    });
+    window.location = 'http://localhost:8081/request';
+    // $.post('http://localhost:8081/role', {role:user_role}, function(data){
+    //   console.log(data);
+    //   window.location = 'http://localhost:8081/'+data.url;
+    // });
   });
 
 });

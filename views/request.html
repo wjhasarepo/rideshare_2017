@@ -56,24 +56,24 @@ $(document).ready(function(){
     var obj = {"bags": bags, "passengers": passengers, "start_address": start_address, "destination_address": destination_address, "request_time": request_time};
     console.log(obj);
 
-    $.get('http://localhost:8080/request/1',  function(data){
+    $.get('http://localhost:8081/request/1',  function(data){
       console.log(data);
       if(data == '') {
-        $.post('http://localhost:8080/request', obj, function(data){
+        $.post('http://localhost:8081/request', obj, function(data){
             console.log(data);
-            window.location = 'http://localhost:8080/'+data.url;
+            window.location = 'http://localhost:8081/'+data.url;
           }
         )
       } else {
         $.ajax(
           {
             type: 'PUT',
-            url: 'http://localhost:8080/request/update/1',
+            url: 'http://localhost:8081/request/update/1',
             data: obj,
             dataType: 'json',
             success: function(data){
               console.log(data);
-              window.location = 'http://localhost:8080/'+data.url;
+              window.location = 'http://localhost:8081/'+data.url;
             }
           }
         )
