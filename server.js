@@ -12,27 +12,27 @@ var device_user = require('./routes/device_user');
 var car = require('./routes/car');
 var role = require('./routes/role');
 var request = require('./routes/request')
-var map = require('./lib/maps')
+var match = require('./routes/match')
 // require('./app/passport')(passport);
 
 var app = express();app.set('view engine', 'ejs');
 
 var mysql = require('mysql');
 var bcrypt = require('bcrypt-nodejs');
-
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'jzl000jzl',
-  database : 'rideshare'
-});
-
-connection.connect(function(err) {
-  if(err)
-    console.log("Error connecting database! :( ");
-  else
-    console.log("Database is connected for passport! :) ");
-});
+var connection = require('./lib/db')
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : 'jzl000jzl',
+//   database : 'rideshare'
+// });
+//
+// connection.connect(function(err) {
+//   if(err)
+//     console.log("Error connecting database! :( ");
+//   else
+//     console.log("Database is connected for passport! :) ");
+// });
 
 
 
@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(session({
-	secret: 'vidyapathaisalwaysrunning',
+	secret: 'waynejiaorideshare',
 	resave: true,
 	saveUninitialized: true
  })
@@ -50,8 +50,14 @@ app.use(passport.session()); // persistent login sessions
 
 // used to serialize the user for the session
 passport.serializeUser(function(user, done) {
-  console.log(user.id);
-  done(null, user.user_id);
+  for(key in user){
+    if (user.hasOwnProperty(key)) {
+      console.log("Key is " + key + ", value is " + user[key]);
+    }
+  }
+
+  console.log("user: " + user.id);
+  done(null, user.id);
 });
 
 // used to deserialize the user
@@ -84,8 +90,9 @@ passport.use(
             email: req.body.email,
             phone: req.body.phone,
             password: bcrypt.hashSync(req.body.password, null, null)  // use the generateHash function in our user model
-        };            newUser.id = rows.insertId;
+        };
 
+        console.log("id: " + rows.insertId);
         var dummy_datetime = dateTime.create('1000-01-01 00:00:00').format('Y-m-d H:M:S');
         var datetime = dateTime.create().format('Y-m-d H:M:S');
 
@@ -102,8 +109,17 @@ passport.use(
             return done(err);
           }
 
-          console.log(rows);
-          return done(null, newUser);
+          connection.query("SELECT LAST_INSERT_ID() as id;", function(err, rows) {
+            if (err) {
+              throw err;
+            }
+
+            console.log(rows[0].id);
+            newUser.id = rows[0].id;
+
+            return done(null, newUser);
+          })
+
         });
       }
     });
@@ -178,7 +194,7 @@ app.post('/request', request.create);
 app.delete('/request/delete/:id', request.destroy)
 app.put('/request/update/:id',request.update);
 
-app.post('/match', map.match);
+app.post('/match/:id', match.match);
 
 /*
  * Initial site actions
@@ -248,6 +264,6 @@ app.get("/",function(req,res){-
 */
 
 
-app.listen(8080, ()=>{
-    console.log('App listening on port 8080');
+app.listen(8081, ()=>{
+    console.log('App listening on port 8081');
 });

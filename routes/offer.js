@@ -1,25 +1,10 @@
-// var mysql = require('mysql');
-//
-// var connection = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : 'jzl000jzl',
-//   database : 'rideshare'
-// });
-//
-// connection.connect(function(err) {
-//   if(err)
-//     console.log("Error connecting database! :( ");
-//   else
-//     console.log("Database is connected! :) ");
-// });
+var db = require('../lib/db');
 
-var db = require('./lib/db_conn.js');
 
 /*
 Get all items from the record.
-# GET /requests
-# GET /requests.json
+# GET /offer
+# GET /offer.json
 */
 exports.index = function(req, res){
   console.log("index");
@@ -36,8 +21,8 @@ exports.index = function(req, res){
 
 /*
 Get an items with id = :id.
-# GET /requests
-# GET /requests.json
+# GET /offer
+# GET /offer.json
 */
 exports.show = function(req, res){
   var id = req.params.id;
@@ -52,8 +37,8 @@ exports.show = function(req, res){
 
 /*
 Create an items and save the record.
-# POST /requests
-# POST /requests.json
+# POST /offer
+# POST /offer.json
 */
 exports.create = function(req, res){
   console.log(req.body);
@@ -90,8 +75,8 @@ exports.create = function(req, res){
 
 /*
 Update an items with id = :id.
-# PUT /requests/1
-# PUT /requests/1.json
+# PUT /offer/1
+# PUT /offer/1.json
 */
 exports.update = function(req, res){
 	var id = req.params.id;
@@ -112,8 +97,8 @@ exports.update = function(req, res){
 
 /*
 Delete an item with id = :id
-# DELETE /requests/1
-# DELETE /requests/1.json
+# DELETE /offer/1
+# DELETE /offer/1.json
 */
 exports.destroy = function(req,res){
   var id = req.params.id;

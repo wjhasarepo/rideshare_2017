@@ -1,21 +1,5 @@
-// var mysql = require('mysql');
-// var bcrypt = require('bcrypt');
-//
-// var connection = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : 'jzl000jzl',
-//   database : 'rideshare'
-// });
-//
-// connection.connect(function(err) {
-//   if(err)
-//     console.log("Error connecting database! :( ");
-//   else
-//     console.log("Database is connected! :) ");
-// });
-
-var db = require('./lib/db_conn.js');
+var db = require('../lib/db');
+var bcrypt = require('bcrypt');
 
 exports.register = function(req, res) {
   if(!req.body.email || !req.body.password) {

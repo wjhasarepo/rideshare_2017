@@ -36,13 +36,13 @@ create unique index id on device_users (user_id, email)
 
 create table users_role
 (
-role_id integer not null auto_increment primary key,
-user_id integer not null,
-type varchar(128),
-created_at datetime,
-updated_at datetime,
-foreign key (user_id) references device_users(user_id) on delete cascade,
-)
+  role_id integer not null auto_increment primary key,
+  user_id integer not null,
+  type varchar(128),
+  created_at datetime,
+  updated_at datetime,
+  foreign key (user_id) references device_users(user_id) on delete cascade
+);
 
 add_index device_users_roles, [user_id, role_id], name: index_device_users_roles_on_user_id_and_role_id
 add_index roles, [name, resource_type, resource_id], name: index_roles_on_name_and_resource_type_and_resource_id
@@ -52,15 +52,15 @@ add_index roles, [name], name: index_roles_on_name
 
 create table cars
 (
-user_id integer not null,
-car_id integer not null auto_increment primary key,
-year integer,
-make varchar(128),
-model varchar(128),
-color varchar(128),
-created_at datetime,
-updated_at datetime,
-foreign key (user_id) references device_users(user_id) on delete cascade
+  user_id integer not null,
+  car_id integer not null auto_increment primary key,
+  year integer,
+  make varchar(128),
+  model varchar(128),
+  color varchar(128),
+  created_at datetime,
+  updated_at datetime,
+  foreign key (user_id) references device_users(user_id) on delete cascade
 );
 
 add_index cars, [user_id], name: index_cars_on_user_id
@@ -82,7 +82,7 @@ add_index positions, [user_id], name: index_positions_on_user_id
 
 create table rides_offered
 (
-  rider_offer_id integer not null primary key auto_increment,
+  ride_offer_id integer not null primary key auto_increment,
   user_id integer,
   offer_time datetime,
   start_address varchar(128),
@@ -127,15 +127,16 @@ create table rides_requested
 -- airport_id integer,
 -- foreign key (airport_id) references airport(airport_id) on delete cascade
 
-create table rides_matches {
-	ride_match_id integer not null primary key,
-  ride_offer_id integer not null primary key,
-  ride_request_id integer not null primary key, 
-  created_at datetime not null,
-  updated_at datetime not null,
-	foreign key (ride_offered_id) references rides_offered(ride_offer_id) on delete cascade
-	foreign key (ride_requested_id) references device_users(ride_request_id) on delete cascade
-}
+create table rides_matches
+(
+ride_match_id integer not null primary key auto_increment,
+ride_offer_id integer not null,
+ride_request_id integer not null,
+created_at datetime,
+updated_at datetime,
+foreign key (ride_offer_id) references rides_offered(ride_offer_id) on delete cascade,
+foreign key (ride_request_id) references rides_requested(ride_request_id) on delete cascade
+);
   
 add_index ride_matches, [ride_offered_id], name: index_ride_matches_on_ride_offered_id
 add_index ride_matches, [ride_requested_id], name: index_ride_matches_on_ride_requested_id
@@ -190,20 +191,17 @@ insert into rides_requested
 values
 (null,1,2,2,'2017-05-01 16:10:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'1320 W Lindsey St, Norman, OK 73069, USA','35.203349','-97.461788','1000-01-01 00:00:00','1000-01-01 00:00:00');
 
-insert into rides_offeredprofile
-(rider_offer_id,user_id,offer_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,available_passengers,available_bags,flexible_value,created_at,updated_at)
+
+
+insert into rides_offered
+(ride_offer_id,user_id,offer_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,available_passengers,available_bags,flexible_value,created_at,updated_at)
 values
 (null,1,'2017-05-01 16:00:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'660 Parrington Oval, Norman, OK 73019, USA','35.2091576','-97.44569340000001',2,2,15,'1000-01-01 00:00:00','1000-01-01 00:00:00');
 insert into rides_offered
-(rider_offer_id,user_id,offer_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,available_passengers,available_bags,flexible_value,created_at,updated_at)
+(ride_offer_id,user_id,offer_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,available_passengers,available_bags,flexible_value,created_at,updated_at)
 values
-(null,2,'2017-05-01 16:10:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'660 Parrington Oval, Norman, OK 73019, USA','35.2091576','-97.44569340000001',2,2,15,'1000-01-01 00:00:00','1000-01-01 00:00:00');
+(null,16,'2017-05-01 16:10:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'660 Parrington Oval, Norman, OK 73019, USA','35.2091576','-97.44569340000001',2,2,15,'1000-01-01 00:00:00','1000-01-01 00:00:00');
 insert into rides_offered
-(rider_offer_id,user_id,offer_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,available_passengers,available_bags,flexible_value,created_at,updated_at)
+(ride_offer_id,user_id,offer_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,available_passengers,available_bags,flexible_value,created_at,updated_at)
 values
-(null,3,'2017-05-01 16:20:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'1320 W Lindsey St, Norman, OK 73069, USA','35.2091576','-97.44569340000001',2,2,15,'1000-01-01 00:00:00','1000-01-01 00:00:00');
-
-insert into rides_requested
-(ride_request_id,user_id,passengers,bags,request_time,start_address,start_lat,start_lng,destination_address,destination_lat,destination_lng,created_at,updated_at)
-values
-(null,4,2,2,'2017-05-01 16:00:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'1320 W Lindsey St, Norman, OK 73069, USA','35.203349','-97.461788','1000-01-01 00:00:00','1000-01-01 00:00:00');
+(null,17,'2017-05-01 16:20:00','7100 Terminal Dr, Oklahoma City, OK 73159, USA',35.3956638,-97.59625319999999,'1320 W Lindsey St, Norman, OK 73069, USA','35.2091576','-97.44569340000001',2,2,15,'1000-01-01 00:00:00','1000-01-01 00:00:00');

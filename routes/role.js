@@ -1,22 +1,7 @@
-// var mysql = require('mysql');
-// var path    = require("path");
-// var dateTime = require('node-datetime');
-//
-// var connection = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : 'jzl000jzl',
-//   database : 'rideshare'
-// });
-//
-// connection.connect(function(err) {
-//   if(err)
-//     console.log("Error connecting database! :( ");
-//   else
-//     console.log("Database is connected! :) ");
-// });
+var db = require('../lib/db');
+var path    = require("path");
+var dateTime = require('node-datetime');
 
-var db = require('./lib/db_conn.js');
 
 /*
 Get all items from the record.
@@ -60,7 +45,7 @@ exports.create = function(req, res){
   console.log(req.session);
   var input = JSON.parse(JSON.stringify(req.body));
   var data = {
-    id    : req.session.passport.user,
+    id    : req.session.passport.user_id,
     role  : input.role
   };
   console.log(data);
