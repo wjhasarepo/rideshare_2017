@@ -1,20 +1,20 @@
-var mysql = require('mysql');
+// var mysql = require('mysql');
+//
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : 'jzl000jzl',
+//   database : 'rideshare'
+// });
+//
+// connection.connect(function(err) {
+//   if(err)
+//     console.log("Error connecting database! :( ");
+//   else
+//     console.log("Database is connected! :) ");
+// });
 
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'jzl000jzl',
-  database : 'rideshare'
-});
-
-connection.connect(function(err) {
-  if(err)
-    console.log("Error connecting database! :( ");
-  else
-    console.log("Database is connected! :) ");
-});
-
-
+var db = require('./lib/db_conn.js');
 
 /*
 Get all items from the record.
@@ -23,7 +23,7 @@ Get all items from the record.
 */
 exports.index = function(req, res){
   console.log("index");
-  var query = connection.query('SELECT * FROM customer', function(err, rows){
+  var query = db.query('SELECT * FROM customer', function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
 
@@ -40,7 +40,7 @@ Get an items with id = :id.
 */
 exports.show = function(req, res){
   var id = req.params.id;
-  var query = connection.query('SELECT * FROM customer WHERE id=' + id, function(err, rows){
+  var query = db.query('SELECT * FROM customer WHERE id=' + id, function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
 
@@ -65,7 +65,7 @@ exports.create = function(req, res){
   };
   console.log(data);
   console.log("INSERT INTO customer VALUES ('"+data.name+"','"+data.address+"','"+data.email+"','"+data.phone+"');");
-  var query = connection.query("INSERT INTO customer VALUES (12, '"+data.name+"','"+data.address+"','"+data.email+"','"+data.phone+"');", function(err, rows){
+  var query = db.query("INSERT INTO customer VALUES (12, '"+data.name+"','"+data.address+"','"+data.email+"','"+data.phone+"');", function(err, rows){
     if(err) {
       console.log("Error Inserting : %s", err);
       res.json({"status":"400 Back Request!"});
@@ -89,7 +89,7 @@ exports.update = function(req, res){
       email   : input.email,
       phone   : input.phone
   };
-  var query = connection.query("UPDATE customer SET name='" + data.name + "', address='" + data.address + "', email='" + data.email + "', phone='" + data.phone + "' WHERE id = " + id, function(err, rows) {
+  var query = db.query("UPDATE customer SET name='" + data.name + "', address='" + data.address + "', email='" + data.email + "', phone='" + data.phone + "' WHERE id = " + id, function(err, rows) {
     if(err) {
       console.log("Error Selecting : %s ", err );
       res.json({"status":"400 Back Request!"});
@@ -106,7 +106,7 @@ Delete an item with id = :id
 */
 exports.destroy = function(req,res){
   var id = req.params.id;
-  connection.query("DELETE FROM customer  WHERE id = " + id, function(err, rows) {
+  db.query("DELETE FROM customer  WHERE id = " + id, function(err, rows) {
     if(err) {
       console.log("Error deleting : %s ",err );
       res.json({"status":"400 Back Request!"});
@@ -126,7 +126,7 @@ exports.save = function(req, res) {
       phone   : input.phone
   };
 
-  var query = connection.query("INSERT INTO customer set ? ",data, function(err, rows) {
+  var query = db.query("INSERT INTO customer set ? ",data, function(err, rows) {
     if (err)
       console.log("Error inserting : %s ",err );
     res.redirect('/customers');

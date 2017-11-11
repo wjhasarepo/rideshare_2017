@@ -1,20 +1,20 @@
-var mysql = require('mysql');
+// var mysql = require('mysql');
+//
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : 'jzl000jzl',
+//   database : 'rideshare'
+// });
+//
+// connection.connect(function(err) {
+//   if(err)
+//     console.log("Error connecting database! :( ");
+//   else
+//     console.log("Database is connected! :) ");
+// });
 
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'jzl000jzl',
-  database : 'rideshare'
-});
-
-connection.connect(function(err) {
-  if(err)
-    console.log("Error connecting database! :( ");
-  else
-    console.log("Database is connected! :) ");
-});
-
-
+var db = require('./lib/db_conn.js');
 
 /*
 Get all items from the record.
@@ -23,7 +23,7 @@ Get all items from the record.
 */
 exports.index = function(req, res){
   console.log("index");
-  var query = connection.query('SELECT * FROM rides_requested', function(err, rows){
+  var query = db.query('SELECT * FROM rides_requested', function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
 
@@ -44,7 +44,7 @@ exports.show = function(req, res){
   var id = req.params.id;
 
   console.log('SELECT * FROM rides_requested WHERE user_id=' + id);
-  var query = connection.query('SELECT * FROM rides_requested WHERE user_id=' + id, function(err, rows){
+  var query = db.query('SELECT * FROM rides_requested WHERE user_id=' + id, function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
     else {
@@ -81,7 +81,7 @@ exports.create = function(req, res){
   var datetime = dateTime.create().format('Y-m-d H:M:S');
   console.log(datetime);
 
-  var query = connection.query("INSERT INTO rides_requested VALUES (null, '"+data.passengers+"','"+data.bags+"','"+data.request_time+"','"+data.start_address+"','"+data.start_lat+"','"+data.start_lng+"','"+data.destination_address+"','"+data.destination_lat+"','"+data.destination_lng+"','"+dateTime+"','"+dateTime+");", function(err, rows){
+  var query = db.query("INSERT INTO rides_requested VALUES (null, '"+data.passengers+"','"+data.bags+"','"+data.request_time+"','"+data.start_address+"','"+data.start_lat+"','"+data.start_lng+"','"+data.destination_address+"','"+data.destination_lat+"','"+data.destination_lng+"','"+dateTime+"','"+dateTime+");", function(err, rows){
     if(err) {
       console.log("INSERT INTO rides_requested VALUES ('"+data.passengers+"','"+data.bags+"','"+data.start_address+"','"+data.start_lat+"');");
       console.log("Error Inserting : %s", err);
@@ -110,8 +110,8 @@ exports.update = function(req, res){
   };
 
   console.log(data);
-  
-  var query = connection.query("UPDATE rides_requested SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE user_id = " + id, function(err, rows) {
+
+  var query = db.query("UPDATE rides_requested SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE user_id = " + id, function(err, rows) {
     if(err) {
       console.log("Error Selecting : %s ", err );
       res.json({"status":"400 Back Request!"});
@@ -128,7 +128,7 @@ Delete an item with id = :id
 */
 exports.destroy = function(req,res){
   var id = req.params.id;
-  connection.query("DELETE FROM rides_requested  WHERE user_id = " + id, function(err, rows) {
+  var query = db.query("DELETE FROM rides_requested  WHERE user_id = " + id, function(err, rows) {
     if(err) {
       console.log("Error deleting : %s ",err );
       res.json({"status":"400 Back Request!"});

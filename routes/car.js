@@ -1,20 +1,20 @@
-var mysql = require('mysql');
+// var mysql = require('mysql');
+//
+// var connection = mysql.createConnection({
+//   host     : 'localhost',
+//   user     : 'root',
+//   password : 'jzl000jzl',
+//   database : 'rideshare'
+// });
+//
+// connection.connect(function(err) {
+//   if(err)
+//     console.log("Error connecting database! :( ");
+//   else
+//     console.log("Database is connected! :) ");
+// });
 
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'jzl000jzl',
-  database : 'rideshare'
-});
-
-connection.connect(function(err) {
-  if(err)
-    console.log("Error connecting database! :( ");
-  else
-    console.log("Database is connected! :) ");
-});
-
-
+var db = require('./lib/db_conn.js');
 
 /*
 Get all items from the record.
@@ -23,7 +23,7 @@ Get all items from the record.
 */
 exports.index = function(req, res){
   console.log("index");
-  var query = connection.query('SELECT * FROM car', function(err, rows){
+  var query = db.query('SELECT * FROM car', function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
 
@@ -40,7 +40,7 @@ Get an items with id = :id.
 */
 exports.show = function(req, res){
   var id = req.params.id;
-  var query = connection.query('SELECT * FROM car WHERE id=' + id, function(err, rows){
+  var query = db.query('SELECT * FROM car WHERE id=' + id, function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
 
@@ -67,7 +67,7 @@ exports.create = function(req, res){
 
   var datetime = dateTime.create().format('Y-m-d H:M:S');
   // console.log("INSERT INTO car VALUES ('"+data.id+"','"+data.address+"','"+data.email+"','"+data.phone+"');");
-  var query = connection.query("INSERT INTO car VALUES (null, '"+data.id+"','"+data.year+"','"+data.make+"','"+data.model+"','"+data.color+",'"+datetime+",'"+datetime+"');", function(err, rows){
+  var query = db.query("INSERT INTO car VALUES (null, '"+data.id+"','"+data.year+"','"+data.make+"','"+data.model+"','"+data.color+",'"+datetime+",'"+datetime+"');", function(err, rows){
     if(err) {
       console.log("Error Inserting : %s", err);
       res.json({"status":"400 Bad Request!"});
@@ -91,7 +91,7 @@ exports.update = function(req, res){
     model   : input.model,
     color   : input.color
   };
-  var query = connection.query("UPDATE car SET year='" + data.year + "', make='" + data.make + "', model='" + data.model + "', color='" + data.color + "' WHERE id = " + id, function(err, rows) {
+  var query = db.query("UPDATE car SET year='" + data.year + "', make='" + data.make + "', model='" + data.model + "', color='" + data.color + "' WHERE id = " + id, function(err, rows) {
     if(err) {
       console.log("Error Updating : %s ", err );
       res.json({"status":"400 Bad Request!"});
@@ -108,7 +108,7 @@ Delete an item with id = :id
 */
 exports.destroy = function(req,res){
   var id = req.params.id;
-  connection.query("DELETE FROM car  WHERE id = " + id, function(err, rows) {
+  var query = db.query("DELETE FROM car  WHERE id = " + id, function(err, rows) {
     if(err) {
       console.log("Error deleting : %s ",err );
       res.json({"status":"400 Bad Request!"});
