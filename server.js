@@ -19,20 +19,7 @@ var app = express();app.set('view engine', 'ejs');
 
 var mysql = require('mysql');
 var bcrypt = require('bcrypt-nodejs');
-var connection = require('./lib/db')
-// var connection = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : 'jzl000jzl',
-//   database : 'rideshare'
-// });
-//
-// connection.connect(function(err) {
-//   if(err)
-//     console.log("Error connecting database! :( ");
-//   else
-//     console.log("Database is connected for passport! :) ");
-// });
+var connection = require('./lib/db');
 
 
 
@@ -56,8 +43,8 @@ passport.serializeUser(function(user, done) {
     }
   }
 
-  console.log("user: " + user.id);
-  done(null, user.id);
+  console.log("user: " + user.user_id);
+  done(null, user.user_id);
 });
 
 // used to deserialize the user
@@ -115,7 +102,7 @@ passport.use(
             }
 
             console.log(rows[0].id);
-            newUser.id = rows[0].id;
+            newUser.user_id = rows[0].id;
 
             return done(null, newUser);
           })
@@ -194,7 +181,8 @@ app.post('/request', request.create);
 app.delete('/request/delete/:id', request.destroy)
 app.put('/request/update/:id',request.update);
 
-app.post('/match/:id', match.match);
+app.get('/match', match.index);
+app.post('/request/:id/offer/:id', match.create);
 
 /*
  * Initial site actions
