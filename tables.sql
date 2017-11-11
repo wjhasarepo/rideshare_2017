@@ -127,7 +127,7 @@ create table rides_requested
 -- airport_id integer,
 -- foreign key (airport_id) references airport(airport_id) on delete cascade
 
-create table rides_matches
+create table rides_matched
 (
 ride_match_id integer not null primary key auto_increment,
 ride_offer_id integer not null,
