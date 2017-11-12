@@ -1,5 +1,5 @@
-var connection = require('../lib/db');
-var mysql = require('mysql');
+var db = require('../lib/db');
+var dateTime = require('node-datetime');
 var googleMapsClient = require('@google/maps').createClient({
    key: 'AIzaSyBpZitbXaqqqM18mOkgxJKi-jXHze0mj1k'
 });
@@ -23,7 +23,7 @@ function f1(request_id) {
   console.log("function f1 with parameter " + request_id);
 
   return new Promise(function(resolve, reject) {
-    connection.query('SELECT * FROM rides_requested where ride_request_id = ' + request_id, function(err, rows){
+    db.query('SELECT * FROM rides_requested where ride_request_id = ' + request_id, function(err, rows){
       if(err) {
         var error = new Error("Error Selecting : %s", err);
         reject(error)
@@ -55,7 +55,7 @@ function f2(passenger) {
   return new Promise(function(resolve, reject) {
     let possibleDrivers = []
 
-    connection.query("SELECT * FROM rides_offered where start_address = '" + passenger.start_address +"'", function(err, rows){
+    db.query("SELECT * FROM rides_offered where start_address = '" + passenger.start_address +"'", function(err, rows){
       if(err) {
         let error = new Error("Error Selecting : %s", err);
         reject(error)
@@ -146,26 +146,23 @@ exports.index = function(req, res) {
     .catch(fail => res.json(fail));
 }
 
-exports.post = function(req, res) {
+exports.create = function(req, res) {
   console.log(req.body);
-  
+
   var data = {
-    offer_id    : 1,
-    request_id  : 2
+    offer_id    :req.body.offer_id,
+    request_id  :req.body.request_id
   };
   console.log(data);
 
   var datetime = dateTime.create().format('Y-m-d H:M:S');
   // console.log("INSERT INTO users_role VALUES (null, '"+data.id+"','"+data.role+"','"+datetime+"','"+datetime+"');");
-  var query = db.query("INSERT INTO ride_matched VALUES (null, '"+data.offer_id+"','"+data.request_id+"','"+datetime+"','"+datetime+"');", function(err, rows){
+  var query = db.query("INSERT INTO rides_matched VALUES (null, '"+data.offer_id+"','"+data.request_id+"','"+datetime+"','"+datetime+"');", function(err, rows){
     if(err) {
       console.log("Error Inserting : %s", err);
       res.json({"status":"400 Bad Request!"});
     } else {
-      // res.sendFile(path.join(__dirname+'/../views/profile.html'));
-      // res.redirect('./views/profile.html');
-      // res.json({"status":"200 OK!"});
-      res.json({"status":"200 OK!", "url": "request"});
+      res.json({"status":"200 OK!", "url": "response"});
     }
   });
 }
@@ -173,7 +170,7 @@ exports.post = function(req, res) {
 /*
 exports.match = function(req, res) {
 
-  connection.query('SELECT * FROM rides_requested where ride_request_id = 1', function(err, rows){
+  db.query('SELECT * FROM rides_requested where ride_request_id = 1', function(err, rows){
     if(err)
       console.log("Error Selecting : %s", err);
 
@@ -186,7 +183,7 @@ exports.match = function(req, res) {
 
     console.log(new Date(requestTime.getTime()+(10*60*1000)));
 
-    connection.query("SELECT * FROM rides_offered where start_address = '"+passengerStartAddress +"'", function(err, rows){
+    db.query("SELECT * FROM rides_offered where start_address = '"+passengerStartAddress +"'", function(err, rows){
       if(err)
         console.log("Error Selecting : %s", err);
 

@@ -156,6 +156,8 @@ app.get('/role', index.role);
 app.get('/profile', index.profile);
 app.get('/ride', index.ride);
 app.get('/request', index.request);
+app.get('/response', index.response);
+
 
 app.get('/customer', customer.index);
 app.get('/customer/:id', customer.show);
@@ -182,7 +184,7 @@ app.delete('/request/delete/:id', request.destroy)
 app.put('/request/update/:id',request.update);
 
 app.get('/match', match.index);
-app.post('/request/:id/offer/:id', match.create);
+app.post('/match', match.create);
 
 /*
  * Initial site actions

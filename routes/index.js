@@ -27,3 +27,7 @@ var path    = require("path");
  exports.request = function(req,res){
    res.sendFile(path.join(__dirname+'/../views/request.html'));
  };
+
+ exports.response = function(req,res){
+   res.sendFile(path.join(__dirname+'/../views/response.html'));
+ };
