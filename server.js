@@ -184,6 +184,7 @@ app.delete('/request/delete/:id', request.destroy)
 app.put('/request/update/:id',request.update);
 
 app.get('/match', match.index);
+app.get('/match/:id', match.show);
 app.post('/match', match.create);
 
 /*

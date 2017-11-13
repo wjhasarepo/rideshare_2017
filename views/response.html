@@ -12,10 +12,11 @@
 </head>
 <style>
  #map {
-   width: 100%;
+   width: 80%;
    height: 400px;
    background-color: grey;
  }
+ 
 </style>
 <body>
 <div class="container">
@@ -39,6 +40,13 @@
 </body>
 
 <script>
+  $(document).ready(function(){
+    $.get('http://localhost:8081/match/1', {}, function(data){
+      console.log(data);
+    });
+
+  });
+
   function initMap() {
     var norman = {lat: 35.3956638, lng: -97.59625319999999};
     var map = new google.maps.Map(document.getElementById('map'), {
@@ -54,30 +62,5 @@
 <script async defer
 src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDV1eUDB9xteputtFWaxWTDsgg9i7qG2-4&callback=initMap">
 </script>
-<!-- <script>
-$(document).ready(function(){
-  $.get('http://localhost:8081/request/1', {}, function(data){
-    console.log(data);
-    for(var item in data) {
-      $("req").append("<li>"+item+"</li>");
-    }
-    $("req").html(JSON.stringify(data));
-  });
 
-  $(".request").on("click", function(){
-
-
-  });
-
-
-  $("res").on("click", ".select", function(){
-    var offer_id = $(this).attr("value");
-    console.log(offer_id);
-    $.post('http://localhost:8081/match', {'request_id': 1, 'offer_id': offer_id}, function(data){
-      console.log(data);
-    });
-  });
-
-});
-</script> -->
 </html>

@@ -144,7 +144,32 @@ exports.index = function(req, res) {
     .then(f3)
     .then(success => res.json(success))
     .catch(fail => res.json(fail));
-}
+};
+
+exports.show = function(req, res) {
+  console.log(req.session);
+
+  var datetime = dateTime.create().format('Y-m-d H:M:S');
+
+  var query = "SELECT a.ride_request_id,a.start_address,a.start_lat,a.start_lng,"
+                      + " a.destination_address,a.destination_lat,a.destination_lng,"
+                      + " b.rider_offer_id,b.start_address,b.start_lat,b.start_lng,"
+                      + " b.destination_address,b.destination_lat,b.destination_lng"
+                      + " FROM rides_requested a, rides_offered b, rides_matched c"
+                      + " WHERE c.ride_match_id = " + req.session.passport.user
+                      + " and c.ride_request_id = a.ride_request_id "
+                      + " and c.ride_offer_id = b.rider_offer_id;";
+console.log(query);
+  db.query(query, function(err, rows) {
+    if(err) {
+      console.log("Error Inserting : %s", err);
+      res.json({"status":"400 Bad Request!"});
+    } else {
+      console.log(rows);
+      res.json(rows);
+    }
+  });
+};
 
 exports.create = function(req, res) {
   console.log(req.body);
@@ -165,7 +190,7 @@ exports.create = function(req, res) {
       res.json({"status":"200 OK!", "url": "response"});
     }
   });
-}
+};
 
 /*
 exports.match = function(req, res) {
