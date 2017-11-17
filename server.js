@@ -13,6 +13,7 @@ var car = require('./routes/car');
 var role = require('./routes/role');
 var request = require('./routes/request')
 var match = require('./routes/match')
+var transaction = require('./routes/transaction')
 // require('./app/passport')(passport);
 
 var app = express();app.set('view engine', 'ejs');
@@ -186,6 +187,12 @@ app.put('/request/update/:id',request.update);
 app.get('/match', match.index);
 app.get('/match/:id', match.show);
 app.post('/match', match.create);
+
+app.get('/transaction', transaction.index);
+app.get('/transaction/:id', transaction.show);
+app.post('/transaction', transaction.create);
+app.delete('/transaction/delete/:id', transaction.destroy)
+app.put('/transaction/update/:id',transaction.update);
 
 /*
  * Initial site actions
