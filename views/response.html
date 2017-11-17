@@ -24,10 +24,10 @@
   }
   #directions-panel {
     margin-top: 10px;
-    background-color: #FFEE77;
+    background-color: #FFF;
     padding: 10px;
     overflow: scroll;
-    height: 174px;
+    height: 50%;
   }
 
 </style>
@@ -40,7 +40,7 @@
     </div>
 
     <div>
-      <button type="submit" class="btn btn-lg request">Start Transaction</button>
+      <button type="submit" class="btn btn-lg transaction">Start Transaction</button>
     </div>
     <h3>My Google Maps Demo</h3>
 
@@ -71,16 +71,20 @@
   //     map: map
   //   });
   // }
-
+  var ride_match_id = 0;
   $(document).ready(function(){
     $.get('http://localhost:8081/match/1', {}, function(data){
       console.log(data[0]);
-      console.log(data[0].destination_lat);
-      console.log(data[0].destination_lng);
-
+      ride_match_id = data.[0].ride_match_id;
       initMap(data[0])
     });
 
+  });
+
+  $(".transaction").on("click", function() {
+    $.post('http://localhost:8081/transaction', {'ride_match_id': ride_match_id}, function(data){
+      console.log(data);
+    });
   });
 
   function initMap(data) {
@@ -93,22 +97,10 @@
     directionsDisplay.setMap(map);
 
     calculateAndDisplayRoute(directionsService, directionsDisplay, data);
-    // document.getElementById('submit').addEventListener('click', function() {
-    //   calculateAndDisplayRoute(directionsService, directionsDisplay);
-    // });
   }
 
   function calculateAndDisplayRoute(directionsService, directionsDisplay, data) {
     var waypts = [];
-    // var checkboxArray = document.getElementById('waypoints');
-    // for (var i = 0; i < checkboxArray.length; i++) {
-    //   if (checkboxArray.options[i].selected) {
-    //     waypts.push({
-    //       location: checkboxArray[i].value,
-    //       stopover: true
-    //     });
-    //   }
-    // }
 
     waypts.push({
       location: data.req_d_addr,

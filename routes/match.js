@@ -153,15 +153,16 @@ exports.show = function(req, res) {
 
   var datetime = dateTime.create().format('Y-m-d H:M:S');
 
-  var query = "SELECT a.ride_request_id, a.start_address as req_s_addr, a.start_lat as req_s_lat, a.start_lng as req_s_lng,"
-                      + " a.destination_address as req_d_addr, a.destination_lat as req_d_lat, a.destination_lng as req_d_lng,"
-                      + " b.ride_offer_id, b.start_address as res_s_addr, b.start_lat as res_s_lat, b.start_lng as res_s_lng,"
-                      + " b.destination_address as res_d_addr, b.destination_lat as res_d_lat, b.destination_lng as res_d_lng"
-                      + " FROM rides_requested a, rides_offered b, rides_matched c, device_users d"
-                      + " WHERE d.user_id = " + req.session.passport.user
-                      + " and a.user_id = d.user_id"
-                      + " and c.ride_request_id = a.ride_request_id"
-                      + " and c.ride_offer_id = b.ride_offer_id;";
+  var query = "SELECT c.ride_match_id,"
+                  + " a.ride_request_id, a.start_address as req_s_addr, a.start_lat as req_s_lat, a.start_lng as req_s_lng,"
+                  + " a.destination_address as req_d_addr, a.destination_lat as req_d_lat, a.destination_lng as req_d_lng,"
+                  + " b.ride_offer_id, b.start_address as res_s_addr, b.start_lat as res_s_lat, b.start_lng as res_s_lng,"
+                  + " b.destination_address as res_d_addr, b.destination_lat as res_d_lat, b.destination_lng as res_d_lng"
+                  + " FROM rides_requested a, rides_offered b, rides_matched c, device_users d"
+                  + " WHERE d.user_id = " + req.session.passport.user
+                  + " and a.user_id = d.user_id"
+                  + " and c.ride_request_id = a.ride_request_id"
+                  + " and c.ride_offer_id = b.ride_offer_id;";
 
   db.query(query, function(err, rows) {
     if(err) {

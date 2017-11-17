@@ -143,14 +143,15 @@ add_index ride_matches, [ride_requested_id], name: index_ride_matches_on_ride_re
 
 
 
-create table rides_transactions {
-	ride_transaction_id integer not null primary key,
-  ride_match_id integer not null primary key,
-  status varchar(255),
-  created_at datetime not null,
-  updated_at datetime not null,
-	foreign key (ride_match_id) references ride_matches(ride_match_id) on delete cascade
-}
+create table rides_transactions
+(
+ride_transaction_id integer not null primary key auto_increment,
+ride_match_id integer not null,
+status varchar(255),
+created_at datetime,
+updated_at datetime,
+foreign key (ride_match_id) references rides_matched(ride_match_id) on delete cascade
+);
   
 add_index ride_transactions, [ride_match_id], name: index_ride_transactions_on_ride_match_id
   
