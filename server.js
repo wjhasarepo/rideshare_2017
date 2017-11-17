@@ -133,11 +133,11 @@ passport.use(
       }
 
       if (!rows.length) {
-        return done(null, false, 'No user found.'); // req.flash is the way to set flashdata using connect-flash
+        return done(null, {'message':'No user found.'}); // req.flash is the way to set flashdata using connect-flash
       }
 
       if (!bcrypt.compareSync(password, rows[0].encrypted_password)) {
-        return done(null, false, 'Oops! Wrong password.');
+        return done(null, {'message':'Oops! Wrong password.'});
       }
 
       console.log(rows[0]);

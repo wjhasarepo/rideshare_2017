@@ -62,7 +62,7 @@ $(document).ready(function(){
         for(key in element){
           if (element.hasOwnProperty(key)) {
             // console.log("Key is " + key + ", value is " + element[key]);
-            if(key == 'rider_offer_id') offer_id = element[key];
+            if(key == 'ride_offer_id') offer_id = element[key];
 
             $("res").append(JSON.stringify(key) + ": " + JSON.stringify(element[key]) + "<br>");
 
