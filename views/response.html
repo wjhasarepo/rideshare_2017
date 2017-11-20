@@ -40,7 +40,13 @@
     </div>
 
     <div>
-      <button type="submit" class="btn btn-lg transaction">Start Transaction</button>
+      <button type="submit" class="btn btn-lg start_transaction">Start Transaction</button>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-lg finish_transaction">Finish Transaction</button>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-lg delete_transaction">Delete Transaction</button>
     </div>
     <h3>My Google Maps Demo</h3>
 
@@ -53,13 +59,6 @@
 </body>
 
 <script>
-  // $(document).ready(function(){
-  //   $.get('http://localhost:8081/match/1', {}, function(data){
-  //     console.log(data);
-  //   });
-  //
-  // });
-
   // function initMap() {
   //   var norman = {lat: 35.3956638, lng: -97.59625319999999};
   //   var map = new google.maps.Map(document.getElementById('map'), {
@@ -71,19 +70,46 @@
   //     map: map
   //   });
   // }
+
   var ride_match_id = 0;
   $(document).ready(function(){
     $.get('http://localhost:8081/match/1', {}, function(data){
       console.log(data[0]);
-      ride_match_id = data.[0].ride_match_id;
+      ride_match_id = data[0].ride_match_id;
       initMap(data[0])
     });
-
   });
 
-  $(".transaction").on("click", function() {
+  $(".start_transaction").on("click", function() {
     $.post('http://localhost:8081/transaction', {'ride_match_id': ride_match_id}, function(data){
       console.log(data);
+      alert("Transaction ID " + ride_match_id);
+    });
+  });
+
+  $(".finish_transaction").on("click", function() {
+    $.ajax({
+       url: 'http://localhost:8081/transaction/update/' + ride_match_id,
+       type: 'PUT',
+       success: function(data) {
+         console.log(data);
+         if(data.status == '200 OK!') {
+           alert("Transaction " + ride_match_id + " complete !");
+         }
+       }
+    });
+  });
+
+  $(".delete_transaction").on("click", function() {
+    $.ajax({
+       url: 'http://localhost:8081/transaction/delete/' + ride_match_id,
+       type: 'DELETE',
+       success: function(data) {
+         console.log(data);
+         if(data.status == '200 OK!') {
+           alert("Transaction " + ride_match_id + " deleted !");
+         }
+       }
     });
   });
 

@@ -27,7 +27,7 @@ Get an items with id = :id.
 */
 exports.show = function(req, res){
   var id = req.params.id;
-  var query = db.query('SELECT * FROM rides_transactions WHERE id=' + id, function(err, rows){
+  var query = db.query('SELECT * FROM rides_transactions WHERE ride_match_id=' + id, function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
 
@@ -58,7 +58,7 @@ exports.create = function(req, res){
       res.json({"status":"400 Bad Request!"});
     } else {
       // res.json({"status":"200 OK!"});
-      res.json({"status":"200 OK!", "url": "request"});
+      res.json({"status":"200 OK!"});
     }
   });
 };
@@ -72,14 +72,16 @@ exports.update = function(req, res){
 	var id = req.params.id;
   var input = JSON.parse(JSON.stringify(req.body));
   var data = {
+    id        : req.params.id,
     status    : 'complete'
   };
-  var query = db.query("UPDATE rides_transactions SET type='" + data.status + "' WHERE id = " + id, function(err, rows) {
+  var query = db.query("UPDATE rides_transactions SET status='" + data.status + "' WHERE ride_match_id = " + data.id, function(err, rows) {
     if(err) {
       console.log("Error Updating : %s ", err );
+      console.log(query.sql);
       res.json({"status":"400 Bad Request!"});
     } else {
-      res.json({"status":"200 OK!"});
+      res.json({"status":"200 OK!", "url": "rate"});
     }
   });
 };
@@ -91,7 +93,7 @@ Delete an item with id = :id
 */
 exports.destroy = function(req,res){
   var id = req.params.id;
-  var query = db.query("DELETE FROM rides_transactions  WHERE id = " + id, function(err, rows) {
+  var query = db.query("DELETE FROM rides_transactions  WHERE ride_match_id = " + id, function(err, rows) {
     if(err) {
       console.log("Error deleting : %s ",err );
       res.json({"status":"400 Bad Request!"});
