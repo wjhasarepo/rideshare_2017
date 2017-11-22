@@ -1,5 +1,6 @@
 var db = require('../lib/db');
 var dateTime = require('node-datetime');
+var io = require('socket.io');
 var googleMapsClient = require('@google/maps').createClient({
    key: 'AIzaSyBpZitbXaqqqM18mOkgxJKi-jXHze0mj1k'
 });
@@ -192,7 +193,11 @@ exports.create = function(req, res) {
       console.log(query.sql)
       res.json({"status":"400 Bad Request!"});
     } else {
-      res.json({"status":"200 OK!", "url": "response"});
+      io.on('connection', function (socket) {
+        socket.emit('match', { hello: 'world' });
+      });
+      console.log(rows.insertId);
+      res.json({"status":"200 OK!", "url": "response", "id": results.insertId});
     }
   });
 };
