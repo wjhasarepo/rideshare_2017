@@ -11,12 +11,25 @@
     </style>
 </head>
 <style>
- #map {
-   width: 80%;
-   height: 400px;
-   background-color: grey;
- }
- 
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  #map {
+    height: 100%;
+    float: left;
+    width: 70%;
+    height: 100%;
+  }
+  #directions-panel {
+    margin-top: 10px;
+    background-color: #FFF;
+    padding: 10px;
+    overflow: scroll;
+    height: 50%;
+  }
+
 </style>
 <body>
 <div class="container">
@@ -27,40 +40,129 @@
     </div>
 
     <div>
-      <button type="submit" class="btn btn-lg request">Start Transaction</button>
+      <button type="submit" class="btn btn-lg start_transaction">Start Transaction</button>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-lg finish_transaction">Finish Transaction</button>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-lg delete_transaction">Delete Transaction</button>
     </div>
     <h3>My Google Maps Demo</h3>
 
 </div>
 
 <div id="map"></div>
-
+<div id="directions-panel"></div>
 
 </div>
 </body>
 
 <script>
+  // function initMap() {
+  //   var norman = {lat: 35.3956638, lng: -97.59625319999999};
+  //   var map = new google.maps.Map(document.getElementById('map'), {
+  //     zoom: 10,
+  //     center: norman
+  //   });
+  //   var marker = new google.maps.Marker({
+  //     position: norman,
+  //     map: map
+  //   });
+  // }
+
+  var ride_match_id = 0;
   $(document).ready(function(){
     $.get('http://localhost:8081/match/1', {}, function(data){
-      console.log(data);
+      console.log(data[0]);
+      ride_match_id = data[0].ride_match_id;
+      initMap(data[0])
     });
-
   });
 
-  function initMap() {
-    var norman = {lat: 35.3956638, lng: -97.59625319999999};
-    var map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 10,
-      center: norman
+  $(".start_transaction").on("click", function() {
+    $.post('http://localhost:8081/transaction', {'ride_match_id': ride_match_id}, function(data){
+      console.log(data);
+      alert("Transaction ID " + ride_match_id);
     });
-    var marker = new google.maps.Marker({
-      position: norman,
-      map: map
+  });
+
+  $(".finish_transaction").on("click", function() {
+    $.ajax({
+       url: 'http://localhost:8081/transaction/update/' + ride_match_id,
+       type: 'PUT',
+       success: function(data) {
+         console.log(data);
+         if(data.status == '200 OK!') {
+           alert("Transaction " + ride_match_id + " complete !");
+         }
+       }
+    });
+  });
+
+  $(".delete_transaction").on("click", function() {
+    $.ajax({
+       url: 'http://localhost:8081/transaction/delete/' + ride_match_id,
+       type: 'DELETE',
+       success: function(data) {
+         console.log(data);
+         if(data.status == '200 OK!') {
+           alert("Transaction " + ride_match_id + " deleted !");
+         }
+       }
+    });
+  });
+
+  function initMap(data) {
+    var directionsService = new google.maps.DirectionsService;
+    var directionsDisplay = new google.maps.DirectionsRenderer;
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 15,
+      center: {lat: data.req_s_lat, lng: data.req_s_lng}
+    });
+    directionsDisplay.setMap(map);
+
+    calculateAndDisplayRoute(directionsService, directionsDisplay, data);
+  }
+
+  function calculateAndDisplayRoute(directionsService, directionsDisplay, data) {
+    var waypts = [];
+
+    waypts.push({
+      location: data.req_d_addr,
+      stopover: true
+    });
+
+    directionsService.route({
+      origin: data.req_s_addr,
+      destination: data.res_d_addr,
+      waypoints: waypts,
+      optimizeWaypoints: true,
+      travelMode: 'DRIVING'
+    }, function(response, status) {
+      if (status === 'OK') {
+        directionsDisplay.setDirections(response);
+        var route = response.routes[0];
+        var summaryPanel = document.getElementById('directions-panel');
+        summaryPanel.innerHTML = '';
+        // For each route, display summary information.
+        for (var i = 0; i < route.legs.length; i++) {
+          var routeSegment = i + 1;
+          summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment +
+              '</b><br>';
+          summaryPanel.innerHTML += route.legs[i].start_address + ' to ';
+          summaryPanel.innerHTML += route.legs[i].end_address + '<br>';
+          summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>';
+        }
+      } else {
+        window.alert('Directions request failed due to ' + status);
+      }
     });
   }
+
 </script>
 <script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDV1eUDB9xteputtFWaxWTDsgg9i7qG2-4&callback=initMap">
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDV1eUDB9xteputtFWaxWTDsgg9i7qG2-4">
 </script>
 
 </html>

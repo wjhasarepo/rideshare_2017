@@ -1,5 +1,6 @@
 var db = require('../lib/db');
 var dateTime = require('node-datetime');
+var io = require('socket.io');
 var googleMapsClient = require('@google/maps').createClient({
    key: 'AIzaSyBpZitbXaqqqM18mOkgxJKi-jXHze0mj1k'
 });
@@ -19,11 +20,12 @@ var googleMapsClient = require('@google/maps').createClient({
 // });
 
 
-function f1(request_id) {
-  console.log("function f1 with parameter " + request_id);
+function f1(user_id) {
+  console.log("fetch user request with parameter " + user_id);
 
   return new Promise(function(resolve, reject) {
-    db.query('SELECT * FROM rides_requested where ride_request_id = ' + request_id, function(err, rows){
+    // 'SELECT * FROM rides_requested where ride_request_id = ' + request_id
+    db.query('SELECT * FROM rides_requested where user_id = ' + user_id, function(err, rows){
       if(err) {
         var error = new Error("Error Selecting : %s", err);
         reject(error)
@@ -50,14 +52,15 @@ function f1(request_id) {
 
 
 function f2(passenger) {
-  console.log("function f2 with parameter " + passenger);
+  console.log("function f2 called with parameter " + passenger);
 
   return new Promise(function(resolve, reject) {
     let possibleDrivers = []
-
-    db.query("SELECT * FROM rides_offered where start_address = '" + passenger.start_address +"'", function(err, rows){
+    console.log(passenger.start_address);
+    var query = db.query("SELECT * FROM rides_offered where start_address = '" + passenger.start_address +"';", function(err, rows){
       if(err) {
-        let error = new Error("Error Selecting : %s", err);
+        console.log("Error Selecting : %s", err);
+        console.log(query);
         reject(error)
       } else {
         console.log("===================== driver information ===================");
@@ -89,7 +92,7 @@ function f2(passenger) {
 }
 
 function f3(params) {
-  console.log("function 3 called ");
+  console.log("function f3 called ");
 
   let promises = []
 
@@ -151,18 +154,21 @@ exports.show = function(req, res) {
 
   var datetime = dateTime.create().format('Y-m-d H:M:S');
 
-  var query = "SELECT a.ride_request_id,a.start_address,a.start_lat,a.start_lng,"
-                      + " a.destination_address,a.destination_lat,a.destination_lng,"
-                      + " b.rider_offer_id,b.start_address,b.start_lat,b.start_lng,"
-                      + " b.destination_address,b.destination_lat,b.destination_lng"
-                      + " FROM rides_requested a, rides_offered b, rides_matched c"
-                      + " WHERE c.ride_match_id = " + req.session.passport.user
-                      + " and c.ride_request_id = a.ride_request_id "
-                      + " and c.ride_offer_id = b.rider_offer_id;";
-console.log(query);
+  var query = "SELECT c.ride_match_id,"
+                  + " a.ride_request_id, a.start_address as req_s_addr, a.start_lat as req_s_lat, a.start_lng as req_s_lng,"
+                  + " a.destination_address as req_d_addr, a.destination_lat as req_d_lat, a.destination_lng as req_d_lng,"
+                  + " b.ride_offer_id, b.start_address as res_s_addr, b.start_lat as res_s_lat, b.start_lng as res_s_lng,"
+                  + " b.destination_address as res_d_addr, b.destination_lat as res_d_lat, b.destination_lng as res_d_lng"
+                  + " FROM rides_requested a, rides_offered b, rides_matched c, device_users d"
+                  + " WHERE d.user_id = " + req.session.passport.user
+                  + " and a.user_id = d.user_id"
+                  + " and c.ride_request_id = a.ride_request_id"
+                  + " and c.ride_offer_id = b.ride_offer_id;";
+
   db.query(query, function(err, rows) {
     if(err) {
       console.log("Error Inserting : %s", err);
+      console.log(query);
       res.json({"status":"400 Bad Request!"});
     } else {
       console.log(rows);
@@ -178,16 +184,20 @@ exports.create = function(req, res) {
     offer_id    :req.body.offer_id,
     request_id  :req.body.request_id
   };
-  console.log(data);
 
   var datetime = dateTime.create().format('Y-m-d H:M:S');
   // console.log("INSERT INTO users_role VALUES (null, '"+data.id+"','"+data.role+"','"+datetime+"','"+datetime+"');");
   var query = db.query("INSERT INTO rides_matched VALUES (null, '"+data.offer_id+"','"+data.request_id+"','"+datetime+"','"+datetime+"');", function(err, rows){
     if(err) {
       console.log("Error Inserting : %s", err);
+      console.log(query.sql)
       res.json({"status":"400 Bad Request!"});
     } else {
-      res.json({"status":"200 OK!", "url": "response"});
+      io.on('connection', function (socket) {
+        socket.emit('match', { hello: 'world' });
+      });
+      console.log(rows.insertId);
+      res.json({"status":"200 OK!", "url": "response", "id": results.insertId});
     }
   });
 };

@@ -1,0 +1,93 @@
+<!-- views/login.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Request information</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>s
+    <style>
+        body        { padding-top:80px; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<div class="col-sm-6 col-sm-offset-3">
+
+    <div class="form-group">
+        <label>Bags Available</label>
+        <input type="text" class="bags" name="bags" value="1">
+    </div>
+    <div class="form-group">
+        <label>Passengers Available</label>
+        <input type="text" class="passengers" name="passengers" value="1">
+    </div>
+    <div class="form-group">
+        <label>Airport</label>
+        <input type="text" class="start_address" name="start_address" value="7100 Terminal Dr, Oklahoma City, OK 73159, USA">
+    </div>
+    <div class="form-group">
+        <label>Destination</label>
+        <input type="text" class="destination_address" name="destination_address" value="100 W Reno Ave, Oklahoma City, OK 73102">
+    </div>
+    <div class="form-group">
+        <label>Time to leave</label>
+        <input type="text" class="request_time" name="requestTime" value="2017-05-01 16:30:00">
+    </div>
+
+    <button type="submit" class="btn btn-lg request">Submit</button>
+
+    <p><a href="/role">Back</a></p>
+
+</div>
+
+</div>
+</body>
+<script>
+$(document).ready(function(){
+  $(".container").find(".request").on("click", function() {
+    var bags = $(".container").find(".bags").val();
+    var passengers = $(".container").find(".passengers").val();
+    var start_address = $(".container").find(".start_address").val();
+    var destination_address = $(".container").find(".destination_address").val();
+    var request_time = $(".container").find(".request_time").val();
+
+    var obj = {"bags": bags, "passengers": passengers, "start_address": start_address, "destination_address": destination_address, "request_time": request_time};
+    console.log(obj);
+
+    $.get('http://localhost:8081/offer/1',  function(data){
+      console.log(data);
+      if(data == '') {
+        $.post('http://localhost:8081/offer', obj, function(data){
+            console.log(data);
+            window.location = 'http://localhost:8081/'+data.url;
+          }
+        )
+      } else {
+        $.ajax(
+          {
+            type: 'PUT',
+            url: 'http://localhost:8081/offer/update/1',
+            data: obj,
+            dataType: 'json',
+            success: function(data){
+              console.log(data);
+              window.location = 'http://localhost:8081/'+data.url;
+            }
+          }
+        )
+      }
+    });
+
+  });
+
+  var socket = io.connect('http://localhost:8081');
+  socket.on('news', function (data) {
+    console.log(data);
+  });
+});
+
+</script>
+</html>

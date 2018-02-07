@@ -13,6 +13,7 @@ var car = require('./routes/car');
 var role = require('./routes/role');
 var request = require('./routes/request')
 var match = require('./routes/match')
+var transaction = require('./routes/transaction')
 // require('./app/passport')(passport);
 
 var app = express();app.set('view engine', 'ejs');
@@ -134,11 +135,11 @@ passport.use(
       }
 
       if (!rows.length) {
-        return done(null, false, 'No user found.'); // req.flash is the way to set flashdata using connect-flash
+        return done(null, {'message':'No user found.'}); // req.flash is the way to set flashdata using connect-flash
       }
 
       if (!bcrypt.compareSync(password, rows[0].encrypted_password)) {
-        return done(null, false, 'Oops! Wrong password.');
+        return done(null, {'message':'Oops! Wrong password.'});
       }
 
       console.log(rows[0]);
@@ -148,6 +149,8 @@ passport.use(
   })
 );
 */
+
+
 
 /*
  * Routes for requests
@@ -188,6 +191,12 @@ app.put('/request/update/:id',request.update);
 app.get('/match', match.index);
 app.get('/match/:id', match.show);
 app.post('/match', match.create);
+
+app.get('/transaction', transaction.index);
+app.get('/transaction/:id', transaction.show);
+app.post('/transaction', transaction.create);
+app.delete('/transaction/delete/:id', transaction.destroy)
+app.put('/transaction/update/:id',transaction.update);
 
 /*
  * Initial site actions
