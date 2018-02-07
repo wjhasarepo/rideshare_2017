@@ -3,7 +3,7 @@ var session = require('express-session');
 var path = require('path');
 var bodyParser = require("body-parser");
 var passport = require('passport');
-var strategy = require('passport-local').Strategy;
+// var strategy = require('passport-local').Strategy;
 var dateTime = require('node-datetime');
 
 var customer = require('./routes/customer');
@@ -21,7 +21,7 @@ var mysql = require('mysql');
 var bcrypt = require('bcrypt-nodejs');
 var connection = require('./lib/db');
 
-
+require('./lib/auth')(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -35,6 +35,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
+/*
 // used to serialize the user for the session
 passport.serializeUser(function(user, done) {
   for(key in user){
@@ -146,6 +147,7 @@ passport.use(
     });
   })
 );
+*/
 
 /*
  * Routes for requests
