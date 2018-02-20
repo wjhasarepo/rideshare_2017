@@ -40,133 +40,20 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 
-/*
-// used to serialize the user for the session
-passport.serializeUser(function(user, done) {
-  for(key in user){
-    if (user.hasOwnProperty(key)) {
-      console.log("Key is " + key + ", value is " + user[key]);
-    }
-  }
-
-  console.log("user: " + user.user_id);
-  done(null, user.user_id);
-});
-
-// used to deserialize the user
-passport.deserializeUser(function(id, done) {
-  console.log("SELECT * FROM device_users WHERE user_id = " + id);
-  connection.query("SELECT * FROM device_users WHERE user_id = " + id, function(err, user){
-    done(err, user);
-  });
-});
-
-passport.use(
-  'signup',
-  new strategy({
-    usernameField : 'email',
-    passwordField : 'password',
-    passReqToCallback : true
-  },
-  function(req, email, password, done) {
-    console.log(req.body)
-
-    connection.query("SELECT * FROM device_users WHERE 'email'='" + req.body.email + "'", function(err, rows) {
-      if (err)
-        return done(err);
-      if (rows.length) {
-        return done(null, false, 'That username is already taken.');
-      } else {
-        var newUser = {
-            first_name: req.body.firstname,
-            last_name: req.body.lastname,
-            email: req.body.email,
-            phone: req.body.phone,
-            password: bcrypt.hashSync(req.body.password, null, null)  // use the generateHash function in our user model
-        };
-
-        console.log("id: " + rows.insertId);
-        var dummy_datetime = dateTime.create('1000-01-01 00:00:00').format('Y-m-d H:M:S');
-        var datetime = dateTime.create().format('Y-m-d H:M:S');
-
-        var insertQuery = "INSERT INTO device_users " +
-                          "( user_id, first_name, last_name, phone_number, email, encrypted_password, sign_in_count, current_sign_in_at, last_sign_in_at, current_sign_in_ip, last_sign_in_ip, failed_attempts, locked_at, unlock_token, token, created_at, updated_at ) " +
-                          "VALUES " +
-                          "( null, '" + newUser.first_name + "', '" + newUser.last_name + "', '" + newUser.phone + "', '" + newUser.email + "', '" + newUser.password + "', " +
-                          "0, '" + dummy_datetime + "', '" + dummy_datetime + "', null, null, 0, '" + dummy_datetime + "', null, null, '" + datetime + "', '" + datetime + "' )";
-
-
-        connection.query(insertQuery, function(err, rows) {
-          if (err) {
-            console.log(insertQuery);
-            return done(err);
-          }
-
-          connection.query("SELECT LAST_INSERT_ID() as id;", function(err, rows) {
-            if (err) {
-              throw err;
-            }
-
-            console.log(rows[0].id);
-            newUser.user_id = rows[0].id;
-
-            return done(null, newUser);
-          })
-
-        });
-      }
-    });
-  })
-)
-
-passport.use(
-  'login',
-  new strategy({
-    usernameField : 'email',
-    passwordField : 'password',
-    passReqToCallback : true, // allows us to pass back the entire request to the callback
-    session: false
-  },
-  function(req, email, password, done) { // callback with email and password from our form
-    // console.log(req.body.email);
-    // console.log(email);
-    var user_email = req.body.email;
-
-    connection.query("SELECT * FROM device_users WHERE email='" + email + "';", function(err, rows){
-      if (err) {
-        console.log("SELECT * FROM device_users WHERE email='" + email + "';");
-        return done(err);
-      }
-
-      if (!rows.length) {
-        return done(null, {'message':'No user found.'}); // req.flash is the way to set flashdata using connect-flash
-      }
-
-      if (!bcrypt.compareSync(password, rows[0].encrypted_password)) {
-        return done(null, {'message':'Oops! Wrong password.'});
-      }
-
-      console.log(rows[0]);
-      // all is well, return successful user
-      return done(null, rows[0]);
-    });
-  })
-);
-*/
-
 
 
 /*
  * Routes for requests
  */
 app.get('/', index.index);
-app.get('/login', index.login);
-app.get('/role', index.role);
-app.get('/profile', index.profile);
-app.get('/ride', index.ride);
-app.get('/request', index.request);
-app.get('/response', index.response);
-app.get('/offer', index.offer);
+app.get('/loginPage', index.login);
+app.get('/rolePage', index.role);
+app.get('/profilePage', index.profile);
+app.get('/ridePage', index.ride);
+app.get('/requestPage', index.request);
+app.get('/responsePage', index.response);
+app.get('/offerPage', index.offer);
+app.get('/matchPage', index.match);
 
 
 app.get('/customer', customer.index);
@@ -193,6 +80,12 @@ app.post('/request', request.create);
 app.delete('/request/delete/:id', request.destroy)
 app.put('/request/update/:id',request.update);
 
+app.get('/offer', offer.index);
+app.get('/offer/:id', offer.show);
+app.post('/offer', offer.create);
+app.delete('/offer/delete/:id', offer.destroy)
+app.put('/offer/update/:id',offer.update);
+
 app.get('/match', match.index);
 app.get('/match/:id', match.show);
 app.post('/match', match.create);
@@ -212,8 +105,8 @@ app.post('/signup', passport.authenticate('signup'),
   }
 );
 app.post('/login', passport.authenticate('login', {
-    successRedirect : '/role',
-    failureRedirect : '/login',
+    successRedirect : '/rolePage',
+    failureRedirect : '/loginPage',
     failureFlash : true
   }
   // ),
@@ -228,47 +121,6 @@ app.get('/logout', function(req, res){
   res.redirect('/');
   req.session.notice = "You have successfully been logged out " + name + "!";
 });
-
-
-
-
-/*
-var pool = mysql.createPool({
-    host     : 'localhost',
-    user     : 'root',
-    password : 'jzl000jzl',
-    database : 'mysql',
-    debug    : false
-});
-
-function handle_database(req,res) {
-
-    pool.getConnection(function(err,connection){
-        if (err) {
-          res.json({"code" : 100, "status" : "Error in connection database"});
-          return;
-        }
-
-        console.log('connected as id ' + connection.threadId);
-
-        connection.query("select * from user",function(err,rows){
-            connection.release();
-            if(!err) {
-                res.json(rows);
-            }
-        });
-
-        connection.on('error', function(err) {
-            res.json({"code" : 100, "status" : "Error in connection database"});
-            return;
-        });
-   });
-}
-
-app.get("/",function(req,res){-
-    handle_database(req,res);
-});
-*/
 
 
 app.listen(8081, ()=>{

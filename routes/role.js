@@ -60,7 +60,7 @@ exports.create = function(req, res){
       // res.sendFile(path.join(__dirname+'/../views/profile.html'));
       // res.redirect('./views/profile.html');
       // res.json({"status":"200 OK!"});
-      res.json({"status":"200 OK!", "url": "request"});
+      res.json({"status":"200 OK!", "url": "requestPage"});
     }
   });
 };

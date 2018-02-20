@@ -198,7 +198,7 @@ exports.create = function(req, res) {
         socket.emit('match', { hello: 'world' });
       });
       console.log(rows.insertId);
-      res.json({"status":"200 OK!", "url": "response", "id": rows.insertId});
+      res.json({"status":"200 OK!", "url": "responsePage", "id": rows.insertId});
     }
   });
 };

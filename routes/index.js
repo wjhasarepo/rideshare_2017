@@ -9,29 +9,33 @@ var path    = require("path");
  };
 
  exports.login = function(req,res){
-   res.sendFile(path.join(__dirname+'/../views/login.html'));
+   res.sendFile(path.join(__dirname+'/../views/loginPage.html'));
  };
 
  exports.role = function(req,res){
-   res.sendFile(path.join(__dirname+'/../views/role.html'));
+   res.sendFile(path.join(__dirname+'/../views/rolePage.html'));
  };
 
  exports.profile = function(req,res){
-   res.sendFile(path.join(__dirname+'/../views/profile.html'));
+   res.sendFile(path.join(__dirname+'/../views/profilePage.html'));
  };
 
  exports.ride = function(req,res){
-   res.sendFile(path.join(__dirname+'/../views/ride.html'));
+   res.sendFile(path.join(__dirname+'/../views/ridePage.html'));
  };
 
  exports.request = function(req,res){
-   res.sendFile(path.join(__dirname+'/../views/request.html'));
+   res.sendFile(path.join(__dirname+'/../views/requestPage.html'));
  };
 
  exports.response = function(req,res){
-   res.sendFile(path.join(__dirname+'/../views/response.html'));
+   res.sendFile(path.join(__dirname+'/../views/responsePage.html'));
  };
 
  exports.offer = function(req,res){
-   res.sendFile(path.join(__dirname+'/../views/offer.html'));
+   res.sendFile(path.join(__dirname+'/../views/offerPage.html'));
+ };
+
+ exports.match = function(req,res){
+   res.sendFile(path.join(__dirname+'/../views/matchPage.html'));
  };

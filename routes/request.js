@@ -92,7 +92,7 @@ exports.create = function(req, res){
       console.log("Error Inserting : %s", err);
       res.json({"status":"400 Back Request!"});
     } else {
-      res.json({"status":"200 OK!", "url":"profile"});
+      res.json({"status":"200 OK!", "url":"profilePage"});
     }
   });
 };
@@ -121,7 +121,7 @@ exports.update = function(req, res){
       console.log("Error Selecting : %s ", err );
       res.json({"status":"400 Back Request!"});
     } else {
-      res.json({"status":"200 OK!", "url":"profile"});
+      res.json({"status":"200 OK!", "url":"profilePage"});
     }
   });
 };
