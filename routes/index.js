@@ -31,3 +31,7 @@ var path    = require("path");
  exports.response = function(req,res){
    res.sendFile(path.join(__dirname+'/../views/response.html'));
  };
+
+ exports.offer = function(req,res){
+   res.sendFile(path.join(__dirname+'/../views/offer.html'));
+ };

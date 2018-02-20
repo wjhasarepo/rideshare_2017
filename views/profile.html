@@ -46,7 +46,7 @@
 
 <script>
 $(document).ready(function(){
-  $.get('http://localhost:8081/request/1', {}, function(data){
+  $.get('http://'+location.hostname+':8081/request/1', {}, function(data){
     console.log(data);
     for(var item in data) {
       $("req").append("<li>"+item+"</li>");
@@ -55,7 +55,7 @@ $(document).ready(function(){
   });
 
   $(".request").on("click", function(){
-    $.get('http://localhost:8081/match', function(data){
+    $.get('http://'+location.hostname+':8081/match', function(data){
       data.forEach(function(element) {
         var offer_id = 0;
         $("res").append("Driver Profile: <br>");
@@ -80,9 +80,9 @@ $(document).ready(function(){
   $("res").on("click", ".select", function(){
     var offer_id = $(this).attr("value");
     console.log(offer_id);
-    $.post('http://localhost:8081/match', {'request_id': 1, 'offer_id': offer_id}, function(data){
+    $.post('http://'+location.hostname+':8081/match', {'request_id': 1, 'offer_id': offer_id}, function(data){
       console.log(data);
-      window.location = 'http://localhost:8081/'+data.url;
+      window.location = 'http://'+location.hostname+':8081/'+data.url;
     });
   });
 

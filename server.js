@@ -11,12 +11,16 @@ var index = require('./routes/index');
 var device_user = require('./routes/device_user');
 var car = require('./routes/car');
 var role = require('./routes/role');
-var request = require('./routes/request')
-var match = require('./routes/match')
-var transaction = require('./routes/transaction')
+var request = require('./routes/request');
+var offer = require('./routes/offer');
+var match = require('./routes/match');
+var transaction = require('./routes/transaction');
 // require('./app/passport')(passport);
 
-var app = express();app.set('view engine', 'ejs');
+var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+// app.set('view engine', 'ejs');
 
 var mysql = require('mysql');
 var bcrypt = require('bcrypt-nodejs');
@@ -29,7 +33,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(session({
 	secret: 'waynejiaorideshare',
-	resave: true,
+	resave: false,
 	saveUninitialized: true
  })
 ); // session secret
@@ -162,6 +166,7 @@ app.get('/profile', index.profile);
 app.get('/ride', index.ride);
 app.get('/request', index.request);
 app.get('/response', index.response);
+app.get('/offer', index.offer);
 
 
 app.get('/customer', customer.index);

@@ -59,21 +59,21 @@
 </body>
 
 <script>
-  // function initMap() {
-  //   var norman = {lat: 35.3956638, lng: -97.59625319999999};
-  //   var map = new google.maps.Map(document.getElementById('map'), {
-  //     zoom: 10,
-  //     center: norman
-  //   });
-  //   var marker = new google.maps.Marker({
-  //     position: norman,
-  //     map: map
-  //   });
-  // }
+  function initMap() {
+    var norman = {lat: 35.3956638, lng: -97.59625319999999};
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 10,
+      center: norman
+    });
+    var marker = new google.maps.Marker({
+      position: norman,
+      map: map
+    });
+  }
 
   var ride_match_id = 0;
   $(document).ready(function(){
-    $.get('http://localhost:8081/match/1', {}, function(data){
+    $.get('http://'+location.hostname+':8081/match/1', {}, function(data){
       console.log(data[0]);
       ride_match_id = data[0].ride_match_id;
       initMap(data[0])
@@ -81,7 +81,7 @@
   });
 
   $(".start_transaction").on("click", function() {
-    $.post('http://localhost:8081/transaction', {'ride_match_id': ride_match_id}, function(data){
+    $.post('http://'+location.hostname+':8081/transaction', {'ride_match_id': ride_match_id}, function(data){
       console.log(data);
       alert("Transaction ID " + ride_match_id);
     });
@@ -89,7 +89,7 @@
 
   $(".finish_transaction").on("click", function() {
     $.ajax({
-       url: 'http://localhost:8081/transaction/update/' + ride_match_id,
+       url: 'http://'+location.hostname+':8081/transaction/update/' + ride_match_id,
        type: 'PUT',
        success: function(data) {
          console.log(data);
@@ -102,7 +102,7 @@
 
   $(".delete_transaction").on("click", function() {
     $.ajax({
-       url: 'http://localhost:8081/transaction/delete/' + ride_match_id,
+       url: 'http://'+location.hostname+':8081/transaction/delete/' + ride_match_id,
        type: 'DELETE',
        success: function(data) {
          console.log(data);

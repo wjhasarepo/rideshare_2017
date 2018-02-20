@@ -21,7 +21,7 @@ exports.index = function(req, res){
 
 /*
 Get an items with id = :id.
-# GET /offer
+# GET /offer/id
 # GET /offer.json
 */
 exports.show = function(req, res){

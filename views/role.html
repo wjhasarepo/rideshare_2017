@@ -34,7 +34,7 @@ $(document).ready(function(){
   $(".passenger").on("click", function(){
     var user_role = $(".role").attr("value");
     console.log(user_role);
-    window.location = 'http://localhost:8081/request';
+    window.location = 'http://'+location.hostname+':8081/request';
     // $.post('http://localhost:8081/role', {role:user_role}, function(data){
     //   console.log(data);
     //   window.location = 'http://localhost:8081/'+data.url;
@@ -44,7 +44,7 @@ $(document).ready(function(){
   $(".driver").on("click", function(){
     var user_role = $(".role").attr("value");
     console.log(user_role);
-    window.location = 'http://localhost:8081/offer';
+    window.location = 'http://'+location.hostname+':8081/offer';
     // $.post('http://localhost:8081/role', {role:user_role}, function(data){
     //   console.log(data);
     //   window.location = 'http://localhost:8081/'+data.url;

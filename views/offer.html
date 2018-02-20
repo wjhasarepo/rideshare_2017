@@ -2,11 +2,11 @@
 <!doctype html>
 <html>
 <head>
-    <title>Request information</title>
+    <title>Offer Information</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css"> <!-- load bootstrap css -->
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"> <!-- load fontawesome -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>s
+    <!-- <script src="public/js/socket.io.js"></script> -->
     <style>
         body        { padding-top:80px; }
     </style>
@@ -57,24 +57,24 @@ $(document).ready(function(){
     var obj = {"bags": bags, "passengers": passengers, "start_address": start_address, "destination_address": destination_address, "request_time": request_time};
     console.log(obj);
 
-    $.get('http://localhost:8081/offer/1',  function(data){
+    $.get('http://'+location.hostname+':8081/offer/1',  function(data){
       console.log(data);
       if(data == '') {
-        $.post('http://localhost:8081/offer', obj, function(data){
+        $.post('http://'+location.hostname+':8081/offer', obj, function(data){
             console.log(data);
-            window.location = 'http://localhost:8081/'+data.url;
+            window.location = 'http://'+location.hostname+':8081/'+data.url;
           }
         )
       } else {
         $.ajax(
           {
             type: 'PUT',
-            url: 'http://localhost:8081/offer/update/1',
+            url: 'http://'+location.hostname+':8081/offer/update/1',
             data: obj,
             dataType: 'json',
             success: function(data){
               console.log(data);
-              window.location = 'http://localhost:8081/'+data.url;
+              window.location = 'http://'+location.hostname+':8081/'+data.url;
             }
           }
         )
@@ -83,10 +83,32 @@ $(document).ready(function(){
 
   });
 
-  var socket = io.connect('http://localhost:8081');
-  socket.on('news', function (data) {
-    console.log(data);
-  });
+  // var socket = io.connect('http://localhost:8081/');
+  // socket.on('match', function (data) {
+  //   alert(data);
+  // });
+
+  function getResponse() {
+    $.ajax({
+      type: "GET",
+      url: 'http://'+location.hostname+':8081/match/4',
+      dataType: "json",
+      success: function (data) {
+        console.log(data);
+        if(data == "") {
+          setTimeout(function () {
+              getResponse();
+          }, 5000)
+        }
+      },
+      error: function () {
+        console.log("error");
+      }
+    });
+  }
+
+  getResponse();
+
 });
 
 </script>

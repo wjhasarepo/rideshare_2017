@@ -1,6 +1,6 @@
 var db = require('../lib/db');
 var dateTime = require('node-datetime');
-var io = require('socket.io');
+var io = require('socket.io')();
 var googleMapsClient = require('@google/maps').createClient({
    key: 'AIzaSyBpZitbXaqqqM18mOkgxJKi-jXHze0mj1k'
 });
@@ -161,11 +161,12 @@ exports.show = function(req, res) {
                   + " b.destination_address as res_d_addr, b.destination_lat as res_d_lat, b.destination_lng as res_d_lng"
                   + " FROM rides_requested a, rides_offered b, rides_matched c, device_users d"
                   + " WHERE d.user_id = " + req.session.passport.user
-                  + " and a.user_id = d.user_id"
-                  + " and c.ride_request_id = a.ride_request_id"
-                  + " and c.ride_offer_id = b.ride_offer_id;";
+                  + " and a.ride_request_id = c.ride_request_id"
+                  + " and c.ride_offer_id = d.user_id"
+                  + " and b.ride_offer_id = c.ride_offer_id;";
 
   db.query(query, function(err, rows) {
+    console.log(query);
     if(err) {
       console.log("Error Inserting : %s", err);
       console.log(query);
@@ -187,7 +188,7 @@ exports.create = function(req, res) {
 
   var datetime = dateTime.create().format('Y-m-d H:M:S');
   // console.log("INSERT INTO users_role VALUES (null, '"+data.id+"','"+data.role+"','"+datetime+"','"+datetime+"');");
-  var query = db.query("INSERT INTO rides_matched VALUES (null, '"+data.offer_id+"','"+data.request_id+"','"+datetime+"','"+datetime+"');", function(err, rows){
+  var query = db.query("INSERT INTO rides_matched VALUES (null, '"+data.request_id+"','"+data.offer_id+"','"+datetime+"','"+datetime+"');", function(err, rows){
     if(err) {
       console.log("Error Inserting : %s", err);
       console.log(query.sql)
@@ -197,7 +198,7 @@ exports.create = function(req, res) {
         socket.emit('match', { hello: 'world' });
       });
       console.log(rows.insertId);
-      res.json({"status":"200 OK!", "url": "response", "id": results.insertId});
+      res.json({"status":"200 OK!", "url": "response", "id": rows.insertId});
     }
   });
 };

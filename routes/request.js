@@ -8,6 +8,14 @@ Get all items from the record.
 */
 exports.index = function(req, res){
   console.log("index");
+  console.log("---------------------------------------------------------------");
+  console.log("user session: " + req.session);
+  for(key in req.session){
+    if (user.hasOwnProperty(key)) {
+      console.log("Key is " + key + ", value is " + req.session[key]);
+    }
+  }
+
   var query = db.query('SELECT * FROM rides_requested', function(err, rows){
 		if(err)
 			console.log("Error Selecting : %s", err);
@@ -21,11 +29,23 @@ exports.index = function(req, res){
 
 /*
 Get an items with id = :id.
-# GET /requests
+# GET /requests/id
 # GET /requests.json
 */
 exports.show = function(req, res){
-  console.log(req.session);
+  console.log("---------------------------------------------------------------");
+  console.log("user session: " + req.session);
+  for(key in req.session){
+    if (req.session.hasOwnProperty(key)) {
+      console.log("* Key is " + key + ", value is " + req.session[key]);
+      // for(k in req.session[key]){
+      //   if (req.session[key].hasOwnProperty(k)) {
+      //     console.log("* Key is " + k + ", value is " + req.session[key][k]);
+      //   }
+      // }
+    }
+  }
+
   var id = req.params.id;
 
   console.log('SELECT * FROM rides_requested WHERE user_id=' + id);
