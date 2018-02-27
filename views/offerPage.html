@@ -29,7 +29,7 @@
     </div>
     <div class="form-group">
         <label>Destination</label>
-        <input type="text" class="destination_address" name="destination_address" value="100 W Reno Ave, Oklahoma City, OK 73102">
+        <input type="text" class="destination_address" name="destination_address" value="2900 S Jenkins Ave, Norman, OK 73019">
     </div>
     <div class="form-group">
         <label>Time to leave</label>
@@ -53,7 +53,7 @@ $(document).ready(function(){
     var destination_address = $(".container").find(".destination_address").val();
     var request_time = $(".container").find(".request_time").val();
 
-    var obj = {"bags": bags, "passengers": passengers, "start_address": start_address, "destination_address": destination_address, "request_time": request_time};
+    var obj = {"bags": bags, "passengers": passengers, "start_address": start_address, "destination_address": destination_address, "offer_time": request_time};
     console.log(obj);
 
     $.get('http://'+location.hostname+':8081/offer',  function(data){
@@ -67,7 +67,7 @@ $(document).ready(function(){
             dataType: 'json',
             success: function(data){
               console.log(data);
-              // window.location = 'http://'+location.hostname+':8081/'+data.url;
+              window.location = 'http://'+location.hostname+':8081/'+data.url;
             }
           }
         )
@@ -80,7 +80,7 @@ $(document).ready(function(){
             dataType: 'json',
             success: function(data){
               console.log(data);
-              // window.location = 'http://'+location.hostname+':8081/'+data.url;
+              window.location = 'http://'+location.hostname+':8081/'+data.url;
             }
           }
         )

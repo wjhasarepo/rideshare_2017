@@ -173,7 +173,12 @@ exports.show = function(req, res) {
       res.json({"status":"400 Bad Request!"});
     } else {
       console.log(rows);
-      res.json(rows);
+      if (rows != '') {
+        res.json({"status":"200 OK!", "url": "responsePage", "result":rows});
+      }
+      else {
+        res.json(rows);
+      }
     }
   });
 };
@@ -194,11 +199,9 @@ exports.create = function(req, res) {
       console.log(query.sql)
       res.json({"status":"400 Bad Request!"});
     } else {
-      io.on('connection', function (socket) {
-        socket.emit('match', { hello: 'world' });
-      });
       console.log(rows.insertId);
-      res.json({"status":"200 OK!", "url": "responsePage", "id": rows.insertId});
+      // res.json({"status":"200 OK!", "url": "responsePage", "id": rows.insertId});
+      res.json({"status":"200 OK!", "url": "transactionPage", "id": rows.insertId});
     }
   });
 };

@@ -1,5 +1,7 @@
 var db = require('../lib/db');
-
+var googleMapsClient = require('@google/maps').createClient({
+   key: 'AIzaSyBpZitbXaqqqM18mOkgxJKi-jXHze0mj1k'
+});
 
 /*
 Get all items from the record.
@@ -106,24 +108,52 @@ exports.update = function(req, res){
   console.log(req.body);
 	var id = req.params.id;
   var input = JSON.parse(JSON.stringify(req.body));
-  var data = {
-      passengers            : input.passengers,
-      bags                  : input.bags,
-      request_time          : input.request_time,
-      start_address         : input.start_address,
-      destination_address   : input.destination_address,
-  };
+  googleMapsClient.geocode({
+    address: input.destination_address
+  }, function(err, response) {
+    if (!err) {
+      console.log("================= results with geocoding =================");
+      console.log(response.json.results[0].geometry);
+      var data = {
+          passengers            : input.passengers,
+          bags                  : input.bags,
+          request_time          : input.request_time,
+          start_address         : input.start_address,
+          destination_address   : input.destination_address,
+          destination_lat       : response.json.results[0].geometry.location.lat,
+          destination_lng       : response.json.results[0].geometry.location.lng
+      };
+      console.log(data);
 
-  console.log(data);
-
-  var query = db.query("UPDATE rides_requested SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE user_id = " + id, function(err, rows) {
-    if(err) {
-      console.log("Error Selecting : %s ", err );
-      res.json({"status":"400 Back Request!"});
-    } else {
-      res.json({"status":"200 OK!", "url":"profilePage"});
+      var query = db.query("UPDATE rides_requested SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "', destination_lat='" + data.destination_lat + "', destination_lng='" + data.destination_lng + "' WHERE user_id = " + id, function(err, rows) {
+        if(err) {
+          console.log("Error Selecting : %s ", err );
+          res.json({"status":"400 Back Request!"});
+        } else {
+          res.json({"status":"200 OK!", "url":"profilePage"});
+        }
+      });
     }
   });
+
+  // var data = {
+  //     passengers            : input.passengers,
+  //     bags                  : input.bags,
+  //     request_time          : input.request_time,
+  //     start_address         : input.start_address,
+  //     destination_address   : input.destination_address,
+  // };
+  //
+  // console.log(data);
+  //
+  // var query = db.query("UPDATE rides_requested SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE user_id = " + id, function(err, rows) {
+  //   if(err) {
+  //     console.log("Error Selecting : %s ", err );
+  //     res.json({"status":"400 Back Request!"});
+  //   } else {
+  //     res.json({"status":"200 OK!", "url":"profilePage"});
+  //   }
+  // });
 };
 
 /*

@@ -39,3 +39,7 @@ var path    = require("path");
  exports.match = function(req,res){
    res.sendFile(path.join(__dirname+'/../views/matchPage.html'));
  };
+
+ exports.transaction = function(req,res){
+   res.sendFile(path.join(__dirname+'/../views/transactionPage.html'));
+ };

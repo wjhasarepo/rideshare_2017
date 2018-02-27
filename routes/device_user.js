@@ -44,6 +44,7 @@ exports.authenticate = function(req, res) {
           	//});
           	res.json({ success: true, token: 'JWT ' + token });
         	} else {
+            console.log("===================== User Login ======================");
           	res.send({ success: false, message: 'Authentication failed. Passwords did not match.' });
         	}
       	});

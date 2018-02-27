@@ -59,24 +59,24 @@
 </body>
 
 <script>
-  function initMap() {
-    var norman = {lat: 35.3956638, lng: -97.59625319999999};
-    var map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 10,
-      center: norman
-    });
-    var marker = new google.maps.Marker({
-      position: norman,
-      map: map
-    });
-  }
+  // function initMap() {
+  //   var norman = {lat: 35.3956638, lng: -97.59625319999999};
+  //   var map = new google.maps.Map(document.getElementById('map'), {
+  //     zoom: 10,
+  //     center: norman
+  //   });
+  //   var marker = new google.maps.Marker({
+  //     position: norman,
+  //     map: map
+  //   });
+  // }
 
   var ride_match_id = 0;
   $(document).ready(function(){
     $.get('http://'+location.hostname+':8081/match/1', {}, function(data){
-      console.log(data[0]);
-      ride_match_id = data[0].ride_match_id;
-      initMap(data[0])
+      console.log(data);
+      ride_match_id = data.result[0].ride_match_id;
+      initMap(data.result[0])
     });
   });
 

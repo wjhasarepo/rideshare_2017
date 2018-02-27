@@ -54,6 +54,7 @@ app.get('/requestPage', index.request);
 app.get('/responsePage', index.response);
 app.get('/offerPage', index.offer);
 app.get('/matchPage', index.match);
+app.get('/transactionPage', index.transaction);
 
 
 app.get('/customer', customer.index);

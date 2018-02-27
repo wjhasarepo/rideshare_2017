@@ -1,5 +1,7 @@
 var db = require('../lib/db');
-
+var googleMapsClient = require('@google/maps').createClient({
+   key: 'AIzaSyBpZitbXaqqqM18mOkgxJKi-jXHze0mj1k'
+});
 
 /*
 Get all items from the record.
@@ -7,9 +9,10 @@ Get all items from the record.
 # GET /offer.json
 */
 exports.index = function(req, res){
-  console.log("index");
+  console.log("retrieve all records");
   var query = db.query('SELECT * FROM rides_offered', function(err, rows){
 		if(err) {
+      console.log(query.sql);
       console.log("Error Selecting : %s", err);
     }
     else {
@@ -28,15 +31,20 @@ Get an items with id = :id.
 # GET /offer.json
 */
 exports.show = function(req, res){
+  console.log("retrieve data with id");
   var id = req.session.passport.user;
   console.log(id);
   var query = db.query('SELECT * FROM rides_offered WHERE user_id = ' + id, function(err, rows){
-		if(err)
-			console.log("Error Selecting With id : %s", err);
+		if(err) {
+      console.log("Error Selecting With id : %s", err);
+      console.log(query.sql)
+    }
+		else {
+      console.log(query.sql)
+  		console.log(rows[0]);
+      res.json({"status":"200 OK!", "url":"matchPage"});
+    }
 
-    console.log(query.sql)
-		console.log(rows[0]);
-    res.json({"status":"200 OK!", "url":"matchPage"});
 	});
 };
 
@@ -74,7 +82,7 @@ exports.create = function(req, res){
       res.json({"status":"400 Back Request!"});
     } else {
       console.log(rows);
-      res.json({"status":"200 OK!", "url":"match"});
+      res.json({"status":"200 OK!", "url":"matchPage"});
     }
   });
 };
@@ -85,18 +93,35 @@ Update an items with id = :id.
 # PUT /offer/1.json
 */
 exports.update = function(req, res){
+  console.log("update record");
 	var id = req.session.passport.user;console.log(id);
   var input = JSON.parse(JSON.stringify(req.body));
-  var data = {};
 
-  // loop through input data
+  googleMapsClient.geocode({
+    address: input.destination_address
+  }, function(err, response) {
+    if (!err) {
+      console.log("================= results with geocoding =================");
+      console.log(response.json.results[0].geometry);
+      var data = {
+          available_passengers  : input.passengers,
+          available_bags        : input.bags,
+          offer_time            : input.offer_time,
+          start_address         : input.start_address,
+          destination_address   : input.destination_address,
+          destination_lat       : response.json.results[0].geometry.location.lat,
+          destination_lng       : response.json.results[0].geometry.location.lng
+      };
+      console.log(data);
 
-  var query = db.query("UPDATE rides_offered SET passengers='" + data.passengers + "', bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "' WHERE user_id = " + id, function(err, rows) {
-    if(err) {
-      console.log("Error Selecting : %s ", err );
-      res.json({"status":"400 Back Request!"});
-    } else {
-      res.json({"status":"200 OK!", "url":"match"});
+      var query = db.query("UPDATE rides_offered SET available_passengers='" + data.passengers + "', available_bags='" + data.bags + "', start_address='" + data.start_address + "', destination_address='" + data.destination_address + "', destination_lat='" + data.destination_lat + "', destination_lng='" + data.destination_lng + "' WHERE user_id = " + id, function(err, rows) {
+        if(err) {
+          console.log("Error Selecting : %s ", err );
+          res.json({"status":"400 Bad Request!"});
+        } else {
+          res.json({"status":"200 OK!", "url":"matchPage"});
+        }
+      });
     }
   });
 };
